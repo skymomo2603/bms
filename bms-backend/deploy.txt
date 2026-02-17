@@ -1,0 +1,66 @@
+-- ============================================================
+-- Database Deployment Script
+-- Project: Booking Management System (BMS)
+-- Purpose: Initialize PostgreSQL roles and databases
+-- Author: Kirk Duane S. Villacarlos
+-- ============================================================
+
+-- 1. Create service account
+DO
+$$
+BEGIN
+   IF NOT EXISTS (
+      SELECT FROM pg_catalog.pg_roles WHERE rolname = 'bms-admin'
+   ) THEN
+      CREATE ROLE "bms-admin" LOGIN PASSWORD 'changeme';
+   END IF;
+END
+$$;
+
+-- 2. Create main database
+DO
+$$
+BEGIN
+   IF NOT EXISTS (
+      SELECT FROM pg_database WHERE datname = 'bms'
+   ) THEN
+      CREATE DATABASE bms
+         WITH
+         OWNER = "bms-admin"
+         ENCODING = 'UTF8'
+         LC_COLLATE = 'en_US.UTF-8'
+         LC_CTYPE = 'en_US.UTF-8'
+         TABLESPACE = pg_default
+         CONNECTION LIMIT = -1;
+   END IF;
+END
+$$;
+
+-- 3. Create database schemas
+DO
+$$
+BEGIN
+    IF NOT EXISTS (
+      SELECT FROM pg_namespace WHERE nspname = 'booking'
+    ) THEN
+      CREATE SCHEMA booking AUTHORIZATION "bms-admin";
+    END IF;
+
+    IF NOT EXISTS (
+      SELECT FROM pg_namespace WHERE nspname = 'masterdata'
+    ) THEN
+      CREATE SCHEMA masterdata AUTHORIZATION "bms-admin";
+    END IF;
+END
+$$;
+
+-- 5. Grant service account privileges
+GRANT USAGE, CREATE ON SCHEMA booking TO "bms-admin";
+GRANT USAGE, CREATE ON SCHEMA masterdata TO "bms-admin";
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA booking TO "bms-admin";
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA masterdata TO "bms-admin";
+
+-- ============================================================
+-- End of Deployment Script
+-- ============================================================
