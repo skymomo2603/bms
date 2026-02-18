@@ -14,7 +14,6 @@ export default function Footer() {
         px: 4,
       }}
     >
-      {/* Thin horizontal line near the top */}
       <Divider
         sx={{
           borderColor: "rgba(255,255,255,0.3)",
@@ -22,19 +21,12 @@ export default function Footer() {
         }}
       />
 
-      {/* Content row */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
+      <div className="flex justify-between items-center">
         <Typography variant="body2">
           ©2026 KsVill Hotel. All rights reserved.
         </Typography>
         <Typography variant="body2">Version X.X</Typography>
-      </Box>
+      </div>
     </Box>
   );
 }

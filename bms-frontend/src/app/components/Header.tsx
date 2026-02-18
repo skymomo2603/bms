@@ -42,37 +42,35 @@ export default function Header() {
   return (
     <>
       <AppBar
+        className="mt-px px-2"
         position="fixed"
         sx={{
-          mt: "0.1rem",
           background:
             "linear-gradient(to right, var(--theme-color-dark) 0%, var(--theme-color-light) 63%)",
-          px: 2,
         }}
       >
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Toolbar className="flex justify-between">
           <Typography
-            variant="h6"
-            sx={{ fontStyle: "italic", letterSpacing: "0.15rem" }}
+            sx={{
+              fontSize: "1.3rem",
+              fontStyle: "italic",
+              letterSpacing: "0.15rem",
+            }}
           >
             KsVill Hotel
           </Typography>
 
           {/* Desktop nav */}
-          <Box
-            sx={{
-              display: { xs: "none", md: "flex" },
-              alignItems: "center",
-            }}
-          >
-            <Box sx={{ mx: "1.5rem" }}>
+          <Box className="hidden md:flex items-center">
+            <Box className="mx-6">
               <Link href="/secure/admin/control" passHref>
                 <Button
+                  className="px-6"
                   variant="contained"
                   sx={{
-                    paddingX: "1.5rem",
                     backgroundColor: "white",
                     color: "var(--text-dark)",
+                    fontSize: "0.8rem",
                     textTransform: "none",
                     "&:hover": { backgroundColor: "var(--button-bg-light)" },
                   }}
@@ -83,16 +81,13 @@ export default function Header() {
             </Box>
 
             {navItems.map((item, idx) => (
-              <Box
-                key={item.href}
-                sx={{ display: "flex", alignItems: "center" }}
-              >
+              <Box className="flex items-center" key={item.href}>
                 <Link href={item.href} passHref>
                   <Button
+                    className="flex items-center w-24"
                     sx={{
-                      width: "6.5rem",
                       color: "white",
-                      fontSize: "0.8rem",
+                      fontSize: "0.75rem",
                       textTransform: "none",
                       "&:hover": { backgroundColor: "transparent" },
                     }}
@@ -118,12 +113,11 @@ export default function Header() {
           </Box>
 
           {/* Mobile hamburger */}
-          <IconButton
-            sx={{ display: { xs: "flex", md: "none" }, color: "white" }}
-            onClick={handleDrawerToggle}
-          >
-            <MenuIcon />
-          </IconButton>
+          <div className="flex md:hidden">
+            <IconButton sx={{ color: "white" }} onClick={handleDrawerToggle}>
+              <MenuIcon />
+            </IconButton>
+          </div>
         </Toolbar>
       </AppBar>
 

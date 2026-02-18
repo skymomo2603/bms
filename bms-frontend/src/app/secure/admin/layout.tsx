@@ -1,6 +1,13 @@
 "use client";
 
-import { Box, Button, Grid, Stack, Typography } from "@mui/material";
+import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import MeetingRoomRoundedIcon from "@mui/icons-material/MeetingRoomRounded";
+import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import StorageRoundedIcon from "@mui/icons-material/StorageRounded";
+
+import { Button, Grid, Stack, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -10,55 +17,78 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const navItems = [
-    { label: "Dashboard", href: "/secure/admin/control" },
-    { label: "Bookings", href: "/secure/admin/control/bookings" },
-    { label: "Rooms", href: "/secure/admin/control/rooms" },
-    { label: "Content", href: "/secure/admin/control/content" },
-    { label: "Master Data", href: "/secure/admin/control/masterdata" },
-    { label: "Users", href: "/secure/admin/control/users" },
+    {
+      label: "Dashboard",
+      href: "/secure/admin/control",
+      icon: DashboardIcon,
+    },
+    {
+      label: "Bookings",
+      href: "/secure/admin/control/bookings",
+      icon: MenuBookRoundedIcon,
+    },
+    {
+      label: "Rooms",
+      href: "/secure/admin/control/rooms",
+      icon: MeetingRoomRoundedIcon,
+    },
+    {
+      label: "Content",
+      href: "/secure/admin/control/content",
+      icon: ArticleRoundedIcon,
+    },
+    {
+      label: "Master Data",
+      href: "/secure/admin/control/masterdata",
+      icon: StorageRoundedIcon,
+    },
+    {
+      label: "Users",
+      href: "/secure/admin/control/users",
+      icon: PersonRoundedIcon,
+    },
   ];
 
   const pathname = usePathname();
 
   return (
     <>
-      <Box sx={{ mt: 12, ml: 5 }}>
-        <Stack direction="column" sx={{ my: "1.5rem", ml: "1.5rem" }}>
+      <div className="mt-24 my-4 ml-5">
+        <Stack direction="column">
           <Typography
-            variant="h6"
-            sx={{ fontStyle: "italic", letterSpacing: "0.15rem" }}
+            sx={{
+              fontSize: "1.32rem",
+              fontStyle: "italic",
+              letterSpacing: "0.05rem",
+            }}
           >
             Welcome, Kirk!
           </Typography>
           <Typography
-            variant="body2"
-            sx={{ fontStyle: "italic", letterSpacing: "0.05rem" }}
+            sx={{
+              color: "var(--text-grey-light)",
+              fontSize: "0.8rem",
+              letterSpacing: "0.02rem",
+            }}
           >
-            Super Admin access enabled. Manage all system features from the
+            ⓘ Super Admin access enabled. Manage all system features from the
             control panel below.
           </Typography>
         </Stack>
-      </Box>
+      </div>
 
-      <Box
-        sx={{
-          width: "92%",
-          margin: "auto",
-          boxShadow: "0px 0px 16px var(--box-shadow)",
-          borderRadius: "0.4rem",
-          bgcolor: "white",
-          overflow: "hidden",
-          marginBottom: 8,
-        }}
-      >
-        <Grid container sx={{ minHeight: "32rem" }}>
+      <div className="mb-10">
+        <Grid container sx={{ minHeight: "34rem" }}>
           {/* Left grid: button display control */}
           <Grid
             item
             sx={{
-              minWidth: "11rem",
+              width: "16%",
+              maxWidth: "14rem",
+              py: 3,
               bgcolor: "var(--button-bg-blue)",
-              py: 3.5,
+              borderTopRightRadius: ".5rem",
+              borderBottomRightRadius: ".5rem",
             }}
           >
             {navItems.map((item) => {
@@ -71,13 +101,10 @@ export default function RootLayout({
                     sx={{
                       width: "100%",
                       justifyContent: "flex-start",
-                      py: 2.2,
-                      px: 4,
+                      py: 3,
+                      px: 2,
                       color: "white",
                       borderRadius: "0",
-                      fontSize: "0.92rem",
-                      textTransform: "none",
-                      fontWeight: isActive ? "bold" : "regular",
                       boxShadow: isActive
                         ? "0px 0px 6px var(--box-shadow-light)"
                         : "none",
@@ -89,9 +116,23 @@ export default function RootLayout({
                           ? "var(--button-bg-blue-active)"
                           : "var(--button-bg-blue-hover)",
                       },
+                      borderLeft: isActive ? "2px solid white" : "none",
                     }}
                   >
-                    {item.label}
+                    <item.icon
+                      sx={{
+                        fontSize: isActive ? 32 : 28,
+                        mx: 2,
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        fontSize: isActive ? ".95rem" : ".9rem",
+                        textTransform: "none",
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
                   </Button>
                 </Stack>
               );
@@ -99,11 +140,19 @@ export default function RootLayout({
           </Grid>
 
           {/* Right grid: child route content */}
-          <Grid item sx={{ width: "80%" }}>
+          <Grid
+            item
+            sx={{
+              width: "82%",
+              ml: ".9rem",
+              border: "1px solid var(--stroke-color)",
+              borderRadius: ".5rem",
+            }}
+          >
             <main>{children}</main>
           </Grid>
         </Grid>
-      </Box>
+      </div>
     </>
   );
 }

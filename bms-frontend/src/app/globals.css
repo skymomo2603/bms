@@ -7,6 +7,7 @@
   --theme-color-light: #086fc3;
   --text-dark: #1e3c72;
   --text-light: #045a8d;
+  --text-grey-light: #656565;
   --text-blue-dark: #04355d;
   --icon-blue-dark: #045a8d;
   --button-bg-light: #f0f0f0;
@@ -19,6 +20,7 @@
   --foreground: #171717;
   --box-shadow: rgba(0, 0, 0, 0.22);
   --box-shadow-light: rgba(0, 0, 0, 0.05);
+  --stroke-color: #b2b0b0;
 }
 
 @media (prefers-color-scheme: dark) {
