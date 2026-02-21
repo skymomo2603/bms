@@ -51,6 +51,13 @@ export default function RootLayout({
 
   const pathname = usePathname();
 
+  function isActivePath(pathname: string, href: string, label: string) {
+    if (label === "Dashboard") {
+      return pathname === href;
+    }
+    return pathname === href || pathname.startsWith(href + "/");
+  }
+
   return (
     <>
       <div className="mt-24 my-4 ml-5">
@@ -67,7 +74,7 @@ export default function RootLayout({
           <Typography
             sx={{
               color: "var(--text-grey-light)",
-              fontSize: "0.8rem",
+              fontSize: "0.75rem",
               letterSpacing: "0.02rem",
             }}
           >
@@ -78,7 +85,7 @@ export default function RootLayout({
       </div>
 
       <div className="mb-10">
-        <Grid container sx={{ minHeight: "34rem" }}>
+        <Grid container sx={{ minHeight: "38rem" }}>
           {/* Left grid: button display control */}
           <Grid
             item
@@ -92,7 +99,7 @@ export default function RootLayout({
             }}
           >
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = isActivePath(pathname, item.href, item.label);
               return (
                 <Stack key={item.label}>
                   <Button
@@ -127,7 +134,7 @@ export default function RootLayout({
                     />
                     <Typography
                       sx={{
-                        fontSize: isActive ? ".95rem" : ".9rem",
+                        fontSize: isActive ? ".85rem" : ".8rem",
                         textTransform: "none",
                       }}
                     >
