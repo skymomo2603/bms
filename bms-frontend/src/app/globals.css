@@ -7,7 +7,7 @@
   --theme-color-light: #086fc3;
   --text-dark: #1e3c72;
   --text-light: #045a8d;
-  --text-grey-light: #656565;
+  --text-grey-light: #85a2b3;
   --text-blue-dark: #04355d;
   --icon-blue-dark: #045a8d;
   --button-bg-light: #f0f0f0;
@@ -16,6 +16,7 @@
   --button-bg-blue: #045a8d;
   --button-bg-blue-active: #137ebd;
   --button-bg-blue-hover: #1d74a8;
+  --breadcrum-background: #eef9ff;
   --background: #ffffff;
   --foreground: #171717;
   --box-shadow: rgba(0, 0, 0, 0.22);
