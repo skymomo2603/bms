@@ -47,25 +47,34 @@ export default function ControlFacilityButton({
           <Button
             sx={{
               width: "100%",
-              height: "70%",
-              color: "var(--icon-blue-dark)",
-              "& .MuiButton-startIcon": { margin: 0 },
+              height: "100%",
               "&:hover": { bgcolor: "transparent" },
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: ".8rem",
             }}
           >
-            <item.icon sx={{ fontSize: item.iconSize, mt: "0.8rem" }} />
+            <item.icon
+              sx={{
+                fontSize: item.iconSize,
+                color: "var(--icon-blue-dark)",
+                mt: 1,
+              }}
+            />
+            <Typography
+              variant="h6"
+              sx={{
+                color: "var(--text-blue-dark)",
+                fontSize: "0.7rem",
+                letterSpacing: "0.03rem",
+                textTransform: "capitalize",
+              }}
+            >
+              {item.label}
+            </Typography>
           </Button>
-          <Typography
-            variant="h6"
-            sx={{
-              color: "var(--text-blue-dark)",
-              fontSize: "0.7rem",
-              letterSpacing: "0.03rem",
-              mt: "0.1rem",
-            }}
-          >
-            {item.label}
-          </Typography>
         </Box>
       ))}
     </Box>

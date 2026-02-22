@@ -7,7 +7,16 @@ import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import StorageRoundedIcon from "@mui/icons-material/StorageRounded";
 
-import { Button, Grid, Stack, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  Chip,
+  Divider,
+  Grid,
+  Stack,
+  Typography,
+} from "@mui/material";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -60,44 +69,65 @@ export default function RootLayout({
 
   return (
     <>
-      <div className="mt-24 my-4 ml-5">
-        <Stack direction="column">
-          <Typography
-            sx={{
-              fontSize: "1.32rem",
-              fontStyle: "italic",
-              letterSpacing: "0.05rem",
-            }}
-          >
-            Welcome, Kirk!
-          </Typography>
-          <Typography
-            sx={{
-              color: "var(--text-grey-light)",
-              fontSize: "0.75rem",
-              letterSpacing: "0.02rem",
-            }}
-          >
-            ⓘ Super Admin access enabled. Manage all system features from the
-            control panel below.
-          </Typography>
-        </Stack>
-      </div>
-
-      <div className="mb-10">
-        <Grid container sx={{ minHeight: "38rem" }}>
+      <div className="mb-10 mt-20">
+        <Grid container sx={{ minHeight: "44rem" }}>
           {/* Left grid: button display control */}
           <Grid
             item
             sx={{
               width: "16%",
               maxWidth: "14rem",
-              py: 3,
+              pb: 3,
               bgcolor: "var(--button-bg-blue)",
               borderTopRightRadius: ".5rem",
               borderBottomRightRadius: ".5rem",
+              overflow: "hidden",
             }}
           >
+            {/* Welcome block */}
+            <Box className="flex flex-col items-center justify-center py-6">
+              <Avatar
+                sx={{
+                  width: 72,
+                  height: 72,
+                  bgcolor: "rgba(255,255,255,0.45)",
+                  color: "white",
+                  mb: 1,
+                }}
+              />
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: "1.05rem",
+                  fontWeight: 500,
+                  color: "white",
+                  letterSpacing: "0.05rem",
+                  mb: 0.5,
+                }}
+              >
+                Welcome, Kirk!
+              </Typography>
+              <Chip
+                label="Super Admin"
+                sx={{
+                  fontSize: "0.75rem",
+                  letterSpacing: "0.02rem",
+                  height: "20px",
+                  bgcolor: "rgba(255,255,255,0.25)",
+                  color: "white",
+                }}
+              />
+            </Box>
+
+            <Divider
+              sx={{
+                borderColor: "rgba(255,255,255,0.3)",
+                mb: 1,
+                mx: 2,
+              }}
+            />
+
+            {/* Navigation buttons */}
             {navItems.map((item) => {
               const isActive = isActivePath(pathname, item.href, item.label);
               return (
@@ -134,7 +164,7 @@ export default function RootLayout({
                     />
                     <Typography
                       sx={{
-                        fontSize: isActive ? ".85rem" : ".8rem",
+                        fontSize: isActive ? ".88rem" : ".85rem",
                         textTransform: "none",
                       }}
                     >
