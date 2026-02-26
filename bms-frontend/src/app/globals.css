@@ -8,7 +8,9 @@
   --text-dark: #1e3c72;
   --text-light: #045a8d;
   --text-grey-light: #85a2b3;
+  --text-grey-dark: #656565;
   --text-blue-dark: #04355d;
+  --text-blue-dark2: #045a8d;
   --icon-blue-dark: #045a8d;
   --button-bg-light: #f0f0f0;
   --button-bg-light-hover: #fbfbfb;
@@ -18,11 +20,14 @@
   --button-bg-blue-hover: #1d74a8;
   --breadcrumb-background: #eef9ff;
   --background-custom-blue-1: #0e5288;
+  --background-custom-blue-light-1: #f8fcff;
   --background: #ffffff;
   --foreground: #171717;
   --box-shadow: rgba(0, 0, 0, 0.22);
   --box-shadow-light: rgba(0, 0, 0, 0.05);
   --stroke-color: #b2b0b0;
+  --border-color-custom-1: #a4c3d6;
+  --border-color-custom-2: #b2b0b0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -81,8 +86,10 @@ a {
   text-decoration: none;
 }
 
+/*
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
 }
+*/

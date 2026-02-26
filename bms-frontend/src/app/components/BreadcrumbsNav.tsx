@@ -19,9 +19,9 @@ export default function BreadcrumbsNav({ crumbs }: BreadcrumbsNavProps) {
     <Box
       position="relative"
       sx={{
-        m: 1.2,
         py: 1,
         px: 1.5,
+        m: 2,
         backgroundColor: "var(--breadcrumb-background)",
         borderRadius: "calc(0.5rem * (200 / 400))",
       }}
