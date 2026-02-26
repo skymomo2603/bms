@@ -9,13 +9,13 @@ export default function ContentTab() {
   const navItems = [
     {
       label: "Hero Banner",
-      href: "/secure/admin/content/herobanner",
+      href: "/secure/admin/control/content/herobanner",
       icon: InsertPhotoOutlinedIcon,
       iconSize: 50,
     },
     {
       label: "Carousel",
-      href: "/secure/admin/content/carousel",
+      href: "/secure/admin/control/content/carousel",
       icon: CollectionsOutlinedIcon,
       iconSize: 50,
     },

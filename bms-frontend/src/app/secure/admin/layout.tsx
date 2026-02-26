@@ -90,7 +90,7 @@ export default function RootLayout({
                 sx={{
                   width: 72,
                   height: 72,
-                  bgcolor: "rgba(255,255,255,0.45)",
+                  bgcolor: "rgba(255,255,255,0.6)",
                   color: "white",
                   mb: 1,
                 }}
@@ -110,11 +110,10 @@ export default function RootLayout({
               <Chip
                 label="Super Admin"
                 sx={{
-                  fontSize: "0.75rem",
-                  letterSpacing: "0.02rem",
+                  fontSize: "0.7rem",
                   height: "20px",
-                  bgcolor: "rgba(255,255,255,0.25)",
-                  color: "white",
+                  bgcolor: "white",
+                  color: "var(--text-blue-dark)",
                 }}
               />
             </Box>
