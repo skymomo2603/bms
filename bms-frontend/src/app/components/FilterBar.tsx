@@ -21,8 +21,8 @@ interface FilterDefinition {
 
 interface FilterBarProps {
   keyword: string;
-  dropdownFilters: FilterDefinition[];
-  checkboxFilters: FilterDefinition[];
+  dropdownFilters?: FilterDefinition[];
+  checkboxFilters?: FilterDefinition[];
   onApplyFilters: (values: Record<string, string | boolean>) => void;
 }
 
@@ -52,115 +52,116 @@ export default function FilterBar({
         borderRadius: "calc(0.5rem * (200 / 400))",
       }}
     >
-      {(dropdownFilters.length > 0 || checkboxFilters.length > 0) && (
-        <Grid container spacing={2} alignItems="flex-start">
-          <Grid item xs={1}>
-            <Typography sx={{ fontSize: ".8rem", mt: 1.1 }}>Filter:</Typography>
-          </Grid>
-          <Grid item xs={10}>
-            <Box display="flex" flexDirection="column" gap={1.5}>
-              {/* Dropdowns */}
-              {dropdownFilters.length > 0 && (
-                <Box display="flex" gap={1.5} flexWrap="wrap">
-                  {dropdownFilters.map((f) => (
-                    <Select
-                      key={f.key}
-                      name={f.key}
-                      id={`select-${f.key}`}
-                      value={(values[f.key] as string) || ""}
-                      onChange={(e) => handleChange(f.key, e.target.value)}
-                      displayEmpty
-                      IconComponent={ExpandMoreOutlinedIcon}
-                      sx={{
-                        height: "2.4rem",
-                        minWidth: "7rem",
-                        fontSize: ".8rem",
-                        color: "var(--text-blue-dark2)",
-                        bgcolor: "white",
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                        "& .MuiSelect-icon": {
-                          color: "var(--text-light)",
-                        },
-                        boxShadow: "0px 0px 3px var(--box-shadow)",
-                        borderRadius: 1,
-                      }}
-                      MenuProps={{
-                        disableScrollLock: true,
-                        disablePortal: true,
-                        PaperProps: {
-                          sx: {
-                            boxShadow: "0px 0px 3px var(--box-shadow)",
-                            borderRadius: 1,
-                          },
-                        },
-                      }}
-                    >
-                      <MenuItem value="">
-                        <em>{f.label}</em>
-                      </MenuItem>
-                      {f.options?.map((opt) => (
-                        <MenuItem key={opt} value={opt}>
-                          {opt}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  ))}
-                </Box>
-              )}
-
-              {/* Checkboxes */}
-              {checkboxFilters.length > 0 && (
-                <Box
-                  display="flex"
-                  gap={2}
-                  flexWrap="wrap"
-                  sx={{
-                    height: "2.4rem",
-                    width: "fit-content",
-                    bgcolor: "white",
-                    boxShadow: "0px 0px 3px var(--box-shadow)",
-                    borderRadius: 1,
-                    px: 3,
-                  }}
-                >
-                  {checkboxFilters.map((f) => (
-                    <FormControlLabel
-                      key={f.key}
-                      control={
-                        <Checkbox
-                          sx={{
-                            p: 0,
-                            pr: 0.8,
-                            "& .MuiSvgIcon-root": {
-                              fontSize: 20,
-                              strokeWidth: 0.2,
-                              color: "var(--border-color-custom-1)",
-                            },
-                            "&.Mui-checked .MuiSvgIcon-root": {
-                              color: "var(--button-bg-blue)",
-                            },
-                          }}
-                          checked={Boolean(values[f.key])}
-                          onChange={(e) =>
-                            handleChange(f.key, e.target.checked)
-                          }
-                        />
-                      }
-                      label={
-                        <Typography sx={{ fontSize: ".8rem" }}>
-                          {f.label}
-                        </Typography>
-                      }
-                    />
-                  ))}
-                </Box>
-              )}
-            </Box>
-          </Grid>
+      <Grid container spacing={2} alignItems="flex-start">
+        <Grid item xs={1}>
+          <Typography sx={{ fontSize: ".8rem", mt: 1.1 }}>Filter:</Typography>
         </Grid>
-      )}
+        <Grid item xs={10}>
+          <Box display="flex" flexDirection="column" gap={1.5}>
+            {/* Dropdowns */}
+            {dropdownFilters && (
+              <Box display="flex" gap={1.5} flexWrap="wrap">
+                {dropdownFilters.map((f) => (
+                  <Select
+                    key={f.key}
+                    name={f.key}
+                    id={`select-${f.key}`}
+                    value={(values[f.key] as string) || ""}
+                    onChange={(e) => handleChange(f.key, e.target.value)}
+                    displayEmpty
+                    IconComponent={ExpandMoreOutlinedIcon}
+                    sx={{
+                      height: "2.4rem",
+                      minWidth: "7rem",
+                      fontSize: ".8rem",
+                      color: "var(--text-blue-dark2)",
+                      bgcolor: "white",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        border: "none",
+                      },
+                      "& .MuiSelect-icon": {
+                        color: "var(--text-light)",
+                      },
+                      boxShadow: "0px 0px 3px var(--box-shadow)",
+                      borderRadius: 1,
+                    }}
+                    MenuProps={{
+                      disableScrollLock: true,
+                      disablePortal: true,
+                      PaperProps: {
+                        sx: {
+                          color: "var(--text-blue-dark)",
+                          boxShadow: "0px 0px 3px var(--box-shadow)",
+                          borderRadius: 1,
+                        },
+                      },
+                    }}
+                  >
+                    <MenuItem value="" sx={{ fontSize: "0.88rem" }}>
+                      <em>{f.label}</em>
+                    </MenuItem>
+                    {f.options?.map((opt) => (
+                      <MenuItem
+                        key={opt}
+                        value={opt}
+                        sx={{ fontSize: "0.88rem" }}
+                      >
+                        {opt}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                ))}
+              </Box>
+            )}
+
+            {/* Checkboxes */}
+            {checkboxFilters && (
+              <Box
+                display="flex"
+                gap={2}
+                flexWrap="wrap"
+                sx={{
+                  height: "2.4rem",
+                  width: "fit-content",
+                  bgcolor: "white",
+                  boxShadow: "0px 0px 3px var(--box-shadow)",
+                  borderRadius: 1,
+                  px: 3,
+                }}
+              >
+                {checkboxFilters.map((f) => (
+                  <FormControlLabel
+                    key={f.key}
+                    control={
+                      <Checkbox
+                        sx={{
+                          p: 0,
+                          pr: 0.8,
+                          "& .MuiSvgIcon-root": {
+                            fontSize: 20,
+                            strokeWidth: 0.2,
+                            color: "var(--border-color-custom-1)",
+                          },
+                          "&.Mui-checked .MuiSvgIcon-root": {
+                            color: "var(--button-bg-blue)",
+                          },
+                        }}
+                        checked={Boolean(values[f.key])}
+                        onChange={(e) => handleChange(f.key, e.target.checked)}
+                      />
+                    }
+                    label={
+                      <Typography sx={{ fontSize: ".8rem" }}>
+                        {f.label}
+                      </Typography>
+                    }
+                  />
+                ))}
+              </Box>
+            )}
+          </Box>
+        </Grid>
+      </Grid>
 
       {/* Keyword Section */}
       <Grid container spacing={2} alignItems="center">
@@ -193,6 +194,10 @@ export default function FilterBar({
                 bgcolor: "var(--button-bg-blue)",
                 textTransform: "none",
                 fontSize: ".8rem",
+                "&:hover": {
+                  bgcolor: "var(--button-bg-blue-hover)",
+                  boxShadow: "0px 0px 3px var(--box-shadow)",
+                },
               }}
               startIcon={<FilterListOutlinedIcon />}
             >

@@ -1,7 +1,7 @@
 "use client";
 
 import BreadcrumbsNav from "@/components/BreadcrumbsNav";
-import FacilityControl from "@/components/FacilityControl";
+import FacilityControls from "@/components/FacilityControls";
 import FilterBar from "@/components/FilterBar";
 import { Grid } from "@mui/material";
 
@@ -10,6 +10,8 @@ interface FilterDefinition {
   label: string;
   options?: string[];
 }
+
+const keyword = "keyword";
 
 const dropdownFilters: FilterDefinition[] = [
   {
@@ -41,15 +43,17 @@ const checkboxFilters: FilterDefinition[] = [
   { key: "ac", label: "AC" },
 ];
 
-const keyword = "keyword";
-
-function handleCreate() {
-  console.log("Create Button Triggered");
-}
+function handleCreate() {}
 
 function handleSelectAll() {}
 
 function handleEditAll() {}
+
+function handleSetStatusAll(status: string) {
+  console.log("Set status for all selected rooms:", status);
+}
+
+function handleDeleteAll() {}
 
 export default function ManageRooms() {
   return (
@@ -64,21 +68,24 @@ export default function ManageRooms() {
       <Grid container sx={{ px: 2 }}>
         <Grid
           item
-          xs={2}
+          xs={2.3}
           sx={{
             px: 1.5,
             borderRight: "1px solid var(--border-color-custom-2)",
           }}
         >
-          <FacilityControl
+          <FacilityControls
             labelSingular="Room"
             labelPlural="Rooms"
             onCreate={handleCreate}
             onSelectAll={handleSelectAll}
             onEditAll={handleEditAll}
+            onSetStatusAll={handleSetStatusAll}
+            onDeleteAll={handleDeleteAll}
+            statusOptions={undefined}
           />
         </Grid>
-        <Grid item xs={10} sx={{ pl: 1.5 }}>
+        <Grid item xs={9.7} sx={{ pl: 1.5 }}>
           <FilterBar
             keyword={keyword}
             dropdownFilters={dropdownFilters}
