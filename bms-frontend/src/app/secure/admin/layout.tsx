@@ -90,15 +90,16 @@ export default function RootLayout({
                 sx={{
                   width: 72,
                   height: 72,
-                  bgcolor: "rgba(255,255,255,0.6)",
+                  bgcolor: "rgba(255,255,255,0.3)",
                   color: "white",
                   mb: 1,
+                  border: "3.5px solid white",
                 }}
               />
               <Typography
                 variant="h6"
                 sx={{
-                  fontSize: "1.05rem",
+                  fontSize: "1.1rem",
                   fontWeight: 500,
                   color: "white",
                   letterSpacing: "0.05rem",
@@ -110,7 +111,7 @@ export default function RootLayout({
               <Chip
                 label="Super Admin"
                 sx={{
-                  fontSize: "0.7rem",
+                  fontSize: "0.68rem",
                   height: "20px",
                   bgcolor: "white",
                   color: "var(--text-blue-dark)",
@@ -163,7 +164,7 @@ export default function RootLayout({
                     />
                     <Typography
                       sx={{
-                        fontSize: isActive ? ".88rem" : ".85rem",
+                        fontSize: isActive ? ".89rem" : ".88rem",
                         textTransform: "none",
                       }}
                     >

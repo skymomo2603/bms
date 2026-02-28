@@ -22,7 +22,7 @@ export default function ControlFacilityButton({
     <Box
       sx={{
         display: "flex",
-        gap: 3.2,
+        gap: 2.6,
         px: 4,
         py: 2,
         flexWrap: "wrap",
@@ -36,7 +36,7 @@ export default function ControlFacilityButton({
           sx={{
             width: "8rem",
             textDecoration: "none",
-            boxShadow: "0px 0px 8px var(--box-shadow)",
+            boxShadow: "0px 0px 5px var(--box-shadow)",
             borderRadius: "0.5rem",
             overflow: "hidden",
             textAlign: "center",

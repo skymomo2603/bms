@@ -14,12 +14,13 @@
   --icon-blue-dark: #045a8d;
   --button-bg-light: #f0f0f0;
   --button-bg-light-hover: #fbfbfb;
-  --button-bg-blue-light-hover: #eef9ff;
   --button-bg-blue: #045a8d;
+  --button-bg-blue-hover: rgb(34, 122, 172);
   --button-bg-blue-active: #137ebd;
-  --button-bg-blue-hover: #1d74a8;
+  --button-bg-blue-light-hover: #eef9ff;
   --breadcrumb-background: #eef9ff;
   --background-custom-blue-1: #0e5288;
+  --background-custom-blue-2: #0e5288;
   --background-custom-blue-light-1: #f8fcff;
   --background: #ffffff;
   --foreground: #171717;
@@ -28,6 +29,12 @@
   --stroke-color: #b2b0b0;
   --border-color-custom-1: #a4c3d6;
   --border-color-custom-2: #b2b0b0;
+  --info-bgcolor-active: #02864a;
+  --info-bgcolor-active-light: #039255;
+  --info-bgcolor-inactive: #656565;
+  --info-bgcolor-inactive-light: #757575;
+  --info-bgcolor-delete: #c62828;
+  --info-bgcolor-delete-light: #d93c3c;
 }
 
 @media (prefers-color-scheme: dark) {
