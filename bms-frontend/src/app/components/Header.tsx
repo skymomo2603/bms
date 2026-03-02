@@ -10,6 +10,8 @@ import {
   IconButton,
   Toolbar,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import Link from "next/link";
 import { useState } from "react";
@@ -23,6 +25,8 @@ const navItems = [
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
@@ -42,14 +46,20 @@ export default function Header() {
   return (
     <>
       <AppBar
-        className="mt-px px-2"
         position="fixed"
         sx={{
           background:
             "linear-gradient(to right, var(--theme-color-dark) 0%, var(--theme-color-light) 63%)",
+          mt: 0.125,
+          px: 1,
         }}
       >
-        <Toolbar className="flex justify-between">
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
           <Typography
             sx={{
               fontSize: "1.3rem",
@@ -61,63 +71,70 @@ export default function Header() {
           </Typography>
 
           {/* Desktop nav */}
-          <Box className="hidden md:flex items-center">
-            <Box className="mx-6">
-              <Link href="/secure/admin/control" passHref>
-                <Button
-                  className="px-6"
-                  variant="contained"
-                  sx={{
-                    backgroundColor: "white",
-                    color: "var(--text-dark)",
-                    fontSize: "0.8rem",
-                    textTransform: "none",
-                    "&:hover": { backgroundColor: "var(--button-bg-light)" },
-                  }}
-                >
-                  Control
-                </Button>
-              </Link>
-            </Box>
-
-            {navItems.map((item, idx) => (
-              <Box className="flex items-center" key={item.href}>
-                <Link href={item.href} passHref>
+          {!isMobile && (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ mx: 3 }}>
+                <Link href="/secure/admin/control" passHref>
                   <Button
-                    className="flex items-center w-24"
+                    variant="contained"
                     sx={{
-                      color: "white",
-                      fontSize: "0.75rem",
+                      px: 3,
+                      backgroundColor: "white",
+                      color: "var(--text-dark)",
+                      fontSize: "0.8rem",
                       textTransform: "none",
-                      "&:hover": { backgroundColor: "transparent" },
+                      "&:hover": { backgroundColor: "var(--button-bg-light)" },
                     }}
                   >
-                    {item.label}
+                    Control
                   </Button>
                 </Link>
-
-                {/* Divider only if not the last item */}
-                {idx < navItems.length - 1 && (
-                  <Divider
-                    orientation="vertical"
-                    flexItem
-                    sx={{
-                      bgcolor: "white",
-                      opacity: 0.5,
-                      mx: 2,
-                    }}
-                  />
-                )}
               </Box>
-            ))}
-          </Box>
+
+              {navItems.map((item, idx) => (
+                <Box
+                  sx={{ display: "flex", alignItems: "center" }}
+                  key={item.href}
+                >
+                  <Link href={item.href} passHref>
+                    <Button
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        width: 115,
+                        color: "white",
+                        fontSize: "0.75rem",
+                        textTransform: "none",
+                        "&:hover": { backgroundColor: "transparent" },
+                      }}
+                    >
+                      {item.label}
+                    </Button>
+                  </Link>
+
+                  {/* Divider only if not the last item */}
+                  {idx < navItems.length - 1 && (
+                    <Divider
+                      orientation="vertical"
+                      flexItem
+                      sx={{
+                        bgcolor: "white",
+                        opacity: 0.5,
+                        mx: 1,
+                      }}
+                    />
+                  )}
+                </Box>
+              ))}
+            </Box>
+          )}
 
           {/* Mobile hamburger */}
-          <div className="flex md:hidden">
+          {isMobile && (
             <IconButton sx={{ color: "white" }} onClick={handleDrawerToggle}>
               <MenuIcon />
             </IconButton>
-          </div>
+          )}
         </Toolbar>
       </AppBar>
 

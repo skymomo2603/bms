@@ -29,6 +29,8 @@
   --stroke-color: #b2b0b0;
   --border-color-custom-1: #a4c3d6;
   --border-color-custom-2: #b2b0b0;
+  --border-color-field: rgba(0, 0, 0, 0.23);
+  --border-color-field-hover: rgba(0, 0, 0, 0.87);
   --info-bgcolor-active: #02864a;
   --info-bgcolor-active-light: #039255;
   --info-bgcolor-inactive: #656565;

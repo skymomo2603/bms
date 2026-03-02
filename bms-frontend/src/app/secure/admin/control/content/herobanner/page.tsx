@@ -1,8 +1,8 @@
 "use client";
 
-import BreadcrumbsNav from "@/components/BreadcrumbsNav";
-import FacilityControls from "@/components/FacilityControls";
-import FilterBar from "@/components/FilterBar";
+import BreadcrumbsNav from "@/components/admin/common/BreadcrumbsNav";
+import FacilityControls from "@/components/admin/common/FacilityControls";
+import FilterBar from "@/components/admin/common/FilterBar";
 import { Grid } from "@mui/material";
 
 interface FilterDefinition {
@@ -10,6 +10,8 @@ interface FilterDefinition {
   label: string;
   options?: string[];
 }
+
+const createHref = "/secure/admin/control/content/herobanner/new";
 
 const keyword = "keyword";
 
@@ -20,8 +22,6 @@ const dropdownFilters: FilterDefinition[] = [
     options: ["Active", "Inactive"],
   },
 ];
-
-function handleCreate() {}
 
 function handleSelectAll() {}
 
@@ -49,7 +49,7 @@ export default function HeroBanner() {
           <FacilityControls
             labelSingular="Banner"
             labelPlural="Banners"
-            onCreate={handleCreate}
+            onCreate={createHref}
             onSelectAll={handleSelectAll}
             onDeleteAll={handleDeleteAll}
             statusOptions={undefined}

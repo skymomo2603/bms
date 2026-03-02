@@ -1,7 +1,7 @@
 "use client";
 
-import AdminNavItem from "@/components/AdminNavItem";
-import BreadcrumbsNav from "@/components/BreadcrumbsNav";
+import AdminNavItem from "@/components/admin/common/AdminNavItem";
+import BreadcrumbsNav from "@/components/admin/common/BreadcrumbsNav";
 import DoorFrontOutlinedIcon from "@mui/icons-material/DoorFrontOutlined";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 import RedeemOutlinedIcon from "@mui/icons-material/RedeemOutlined";
