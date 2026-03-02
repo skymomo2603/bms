@@ -1,8 +1,8 @@
 "use client";
 
-import BreadcrumbsNav from "@/components/BreadcrumbsNav";
-import FacilityControls from "@/components/FacilityControls";
-import FilterBar from "@/components/FilterBar";
+import BreadcrumbsNav from "@/components/admin/common/BreadcrumbsNav";
+import FacilityControls from "@/components/admin/common/FacilityControls";
+import FilterBar from "@/components/admin/common/FilterBar";
 import { Grid } from "@mui/material";
 
 interface FilterDefinition {
@@ -10,6 +10,8 @@ interface FilterDefinition {
   label: string;
   options?: string[];
 }
+
+const createHref = "/secure/admin/control/rooms/managerooms/new";
 
 const keyword = "keyword";
 
@@ -43,8 +45,6 @@ const checkboxFilters: FilterDefinition[] = [
   { key: "ac", label: "AC" },
 ];
 
-function handleCreate() {}
-
 function handleSelectAll() {}
 
 function handleEditAll() {}
@@ -77,7 +77,7 @@ export default function ManageRooms() {
           <FacilityControls
             labelSingular="Room"
             labelPlural="Rooms"
-            onCreate={handleCreate}
+            onCreate={createHref}
             onSelectAll={handleSelectAll}
             onEditAll={handleEditAll}
             onSetStatusAll={handleSetStatusAll}

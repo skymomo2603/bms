@@ -1,6 +1,6 @@
 "use client";
 
-import BreadcrumbsNav from "@/components/BreadcrumbsNav";
+import BreadcrumbsNav from "@/components/admin/common/BreadcrumbsNav";
 
 export default function HeroBanner() {
   return (

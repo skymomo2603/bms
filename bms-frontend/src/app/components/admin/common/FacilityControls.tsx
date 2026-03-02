@@ -6,6 +6,7 @@ import {
   SelectAllTwoTone as SelectAllTwoToneIcon,
 } from "@mui/icons-material";
 import { Box, Button, MenuItem, Select, Typography } from "@mui/material";
+import Link from "next/link";
 import { useState } from "react";
 
 type FacilityAction = () => void;
@@ -14,7 +15,7 @@ type FacilityStatusAction = (status: string) => void;
 interface FacilityControlProps {
   labelSingular: string;
   labelPlural: string;
-  onCreate?: FacilityAction;
+  onCreate?: string;
   onSelectAll?: FacilityAction;
   onEditAll?: FacilityAction;
   onSetStatusAll?: FacilityStatusAction;
@@ -22,38 +23,27 @@ interface FacilityControlProps {
   statusOptions?: string[];
 }
 
-const buttonStyleBase = {
+const buttonSx = {
   width: "100%",
   height: "3rem",
   fontSize: "0.8rem",
   textTransform: "none",
   boxShadow: "0px 0px 3px var(--box-shadow)",
-};
-
-const buttonStyle_1 = {
-  ...buttonStyleBase,
   bgcolor: "white",
   color: "var(--text-blue-dark2)",
+  "&:hover": {
+    bgcolor: "var(--button-bg-blue-light-hover)",
+    boxShadow: "0px 0px 3px var(--box-shadow)",
+  },
+};
+
+const actionButtonSx = {
+  ...buttonSx,
   display: "flex",
   justifyContent: "flex-start",
   gap: 1.5,
-  "&:hover": {
-    bgcolor: "var(--button-bg-blue-light-hover)",
-    boxShadow: "0px 0px 3px var(--box-shadow)",
-  },
   "& .MuiSvgIcon-root": { fontSize: "1.7rem" },
   mb: 1.2,
-};
-
-const buttonStyle_2 = {
-  ...buttonStyleBase,
-  textAlign: "center",
-  bgcolor: "white",
-  color: "var(--text-blue-dark2)",
-  "&:hover": {
-    bgcolor: "var(--button-bg-blue-light-hover)",
-    boxShadow: "0px 0px 3px var(--box-shadow)",
-  },
 };
 
 export default function FacilityControl({
@@ -71,14 +61,14 @@ export default function FacilityControl({
   return (
     <Box>
       {onCreate && (
-        <Button
-          variant="contained"
-          onClick={onCreate}
-          sx={{ ...buttonStyle_1, mb: 3 }}
-        >
-          <ControlPointOutlinedIcon />
-          <span>New {labelSingular}</span>
-        </Button>
+        <Link href={onCreate} passHref>
+          <Button sx={{ ...actionButtonSx, mb: 3 }}>
+            <ControlPointOutlinedIcon />
+            <Typography sx={{ ml: 1, fontSize: "0.8rem" }}>
+              New {labelSingular}
+            </Typography>
+          </Button>
+        </Link>
       )}
 
       <Typography
@@ -93,26 +83,27 @@ export default function FacilityControl({
       </Typography>
 
       {onSelectAll && (
-        <Button variant="contained" onClick={onSelectAll} sx={buttonStyle_1}>
+        <Button onClick={onSelectAll} sx={actionButtonSx}>
           <SelectAllTwoToneIcon />
-          <span>Select All</span>
+          <Typography sx={{ ml: 1, fontSize: "0.8rem" }}>Select All</Typography>
         </Button>
       )}
 
       {onEditAll && (
-        <Button variant="contained" onClick={onEditAll} sx={buttonStyle_1}>
+        <Button onClick={onEditAll} sx={actionButtonSx}>
           <EditOutlinedIcon />
-          <span>Edit {labelPlural}</span>
+          <Typography sx={{ ml: 1, fontSize: "0.8rem" }}>
+            Edit {labelPlural}
+          </Typography>
         </Button>
       )}
 
       {onSetStatusAll && (
         <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
           <Button
-            variant="contained"
             onClick={() => status && onSetStatusAll(status)}
             disabled={!status}
-            sx={{ ...buttonStyle_2, width: "33%" }}
+            sx={{ ...buttonSx, width: "33%", textAlign: "center" }}
           >
             Set
           </Button>
@@ -122,7 +113,7 @@ export default function FacilityControl({
             onChange={(e) => setStatus(e.target.value)}
             IconComponent={ExpandMoreOutlinedIcon}
             sx={{
-              ...buttonStyle_2,
+              ...buttonSx,
               flex: 1,
               bgcolor:
                 status === "Active"
@@ -136,7 +127,6 @@ export default function FacilityControl({
                   status === "Active"
                     ? "var(--info-bgcolor-active-light)"
                     : "var(--info-bgcolor-inactive-light)",
-                boxShadow: "0px 0px 3px var(--box-shadow)",
               },
             }}
             MenuProps={{
@@ -162,20 +152,19 @@ export default function FacilityControl({
 
       {onDeleteAll && (
         <Button
-          variant="contained"
           onClick={onDeleteAll}
           sx={{
-            ...buttonStyle_1,
+            ...actionButtonSx,
             mt: 4,
             bgcolor: "var(--info-bgcolor-delete)",
-            "&:hover": {
-              bgcolor: "var(--info-bgcolor-delete-light)",
-              boxShadow: "0px 0px 3px var(--box-shadow)",
-            },
+            color: "white",
+            "&:hover": { bgcolor: "var(--info-bgcolor-delete-light)" },
           }}
         >
-          <DeleteOutlinedIcon sx={{ color: "white" }} />
-          <span className="text-white">Delete {labelPlural}</span>
+          <DeleteOutlinedIcon />
+          <Typography sx={{ ml: 1, color: "white", fontSize: "0.8rem" }}>
+            Delete {labelPlural}
+          </Typography>
         </Button>
       )}
     </Box>

@@ -40,11 +40,34 @@ export default function FilterBar({
     setValues((prev) => ({ ...prev, [key]: val }));
   };
 
+  const commonShadow = "0px 0px 3px var(--box-shadow)";
+  const inputHeight = "2.4rem";
+
+  const selectSx = {
+    height: inputHeight,
+    minWidth: "120px",
+    fontSize: ".8rem",
+    color: "var(--text-blue-dark2)",
+    bgcolor: "white",
+    boxShadow: commonShadow,
+    borderRadius: 1,
+    "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+    "& .MuiSelect-icon": { color: "var(--text-light)" },
+  };
+
+  const textFieldSx = {
+    bgcolor: "white",
+    boxShadow: commonShadow,
+    borderRadius: 1,
+    height: inputHeight,
+    "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+    "& .MuiInputBase-input": { p: 1 },
+  };
+
+  const labelSx = { fontSize: ".8rem", mt: 1.1 };
+
   return (
     <Box
-      display="flex"
-      flexDirection="column"
-      gap={3}
       sx={{
         p: 3,
         bgcolor: "var(--background-custom-blue-light-1)",
@@ -52,15 +75,15 @@ export default function FilterBar({
         borderRadius: "calc(0.5rem * (200 / 400))",
       }}
     >
-      <Grid container spacing={2} alignItems="flex-start">
+      <Grid container spacing={2} alignItems="flex-start" rowGap={0}>
+        {/* Filter Section */}
         <Grid item xs={1}>
-          <Typography sx={{ fontSize: ".8rem", mt: 1.1 }}>Filter:</Typography>
+          <Typography sx={labelSx}>Filter:</Typography>
         </Grid>
-        <Grid item xs={10}>
-          <Box display="flex" flexDirection="column" gap={1.5}>
-            {/* Dropdowns */}
+        <Grid item xs={11}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
             {dropdownFilters && (
-              <Box display="flex" gap={1.5} flexWrap="wrap">
+              <Box sx={{ display: "flex", gap: 1.5, flexWrap: "wrap" }}>
                 {dropdownFilters.map((f) => (
                   <Select
                     key={f.key}
@@ -70,28 +93,14 @@ export default function FilterBar({
                     onChange={(e) => handleChange(f.key, e.target.value)}
                     displayEmpty
                     IconComponent={ExpandMoreOutlinedIcon}
-                    sx={{
-                      height: "2.4rem",
-                      minWidth: "7rem",
-                      fontSize: ".8rem",
-                      color: "var(--text-blue-dark2)",
-                      bgcolor: "white",
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        border: "none",
-                      },
-                      "& .MuiSelect-icon": {
-                        color: "var(--text-light)",
-                      },
-                      boxShadow: "0px 0px 3px var(--box-shadow)",
-                      borderRadius: 1,
-                    }}
+                    sx={selectSx}
                     MenuProps={{
                       disableScrollLock: true,
                       disablePortal: true,
                       PaperProps: {
                         sx: {
                           color: "var(--text-blue-dark)",
-                          boxShadow: "0px 0px 3px var(--box-shadow)",
+                          boxShadow: commonShadow,
                           borderRadius: 1,
                         },
                       },
@@ -114,17 +123,16 @@ export default function FilterBar({
               </Box>
             )}
 
-            {/* Checkboxes */}
             {checkboxFilters && (
               <Box
-                display="flex"
-                gap={2}
-                flexWrap="wrap"
                 sx={{
-                  height: "2.4rem",
+                  display: "flex",
+                  gap: 2,
+                  flexWrap: "wrap",
+                  height: inputHeight,
                   width: "fit-content",
                   bgcolor: "white",
-                  boxShadow: "0px 0px 3px var(--box-shadow)",
+                  boxShadow: commonShadow,
                   borderRadius: 1,
                   px: 3,
                 }}
@@ -134,6 +142,8 @@ export default function FilterBar({
                     key={f.key}
                     control={
                       <Checkbox
+                        checked={Boolean(values[f.key])}
+                        onChange={(e) => handleChange(f.key, e.target.checked)}
                         sx={{
                           p: 0,
                           pr: 0.8,
@@ -146,8 +156,6 @@ export default function FilterBar({
                             color: "var(--button-bg-blue)",
                           },
                         }}
-                        checked={Boolean(values[f.key])}
-                        onChange={(e) => handleChange(f.key, e.target.checked)}
                       />
                     }
                     label={
@@ -161,31 +169,17 @@ export default function FilterBar({
             )}
           </Box>
         </Grid>
-      </Grid>
 
-      {/* Keyword Section */}
-      <Grid container spacing={2} alignItems="center">
+        {/* Keyword Section */}
         <Grid item xs={1}>
-          <Typography sx={{ fontSize: ".8rem" }}>Keyword:</Typography>
+          <Typography sx={labelSx}>Keyword:</Typography>
         </Grid>
-        <Grid item xs={10}>
-          <Box display="flex" gap={1.5}>
+        <Grid item xs={11}>
+          <Box sx={{ display: "flex", gap: 1.5 }}>
             <TextField
-              key={keyword}
               value={(values[keyword] as string) || ""}
               onChange={(e) => handleChange(keyword, e.target.value)}
-              sx={{
-                bgcolor: "white",
-                boxShadow: "0px 0px 3px var(--box-shadow)",
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
-                borderRadius: 1,
-                height: "2.4rem",
-                "& .MuiInputBase-input": {
-                  p: 1,
-                },
-              }}
+              sx={textFieldSx}
             />
             <Button
               variant="contained"
@@ -194,9 +188,10 @@ export default function FilterBar({
                 bgcolor: "var(--button-bg-blue)",
                 textTransform: "none",
                 fontSize: ".8rem",
+                boxShadow: commonShadow,
                 "&:hover": {
                   bgcolor: "var(--button-bg-blue-hover)",
-                  boxShadow: "0px 0px 3px var(--box-shadow)",
+                  boxShadow: commonShadow,
                 },
               }}
               startIcon={<FilterListOutlinedIcon />}
