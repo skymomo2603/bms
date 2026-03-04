@@ -4,13 +4,27 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  schemas  = ["booking"]
+  schemas  = ["booking", "content"]
+}
+
+model HeroBanner {
+  id        Int      @id @default(autoincrement())
+  title     String
+  remarks   String
+  image     String
+  status    String   @default("Active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("herobanner")
+  @@schema("content")
 }
 
 model Room {
   id        Int      @id @default(autoincrement())
   name      String
   capacity  Int
+  status    String   @default("Active")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

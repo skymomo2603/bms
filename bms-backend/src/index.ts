@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express, { Application } from "express";
-import { prisma } from "./prisma.js";
+import heroBannerRoutes from "./routes/heroBannerRoutes.js";
 import roomRoutes from "./routes/roomRoutes.js";
 
 const app: Application = express();
@@ -10,7 +10,8 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // Routes
-app.use("/rooms", roomRoutes);
+app.use("/api/rooms", roomRoutes);
+app.use("/api/herobanner", heroBannerRoutes);
 
 // Root route
 app.get("/", (_req, res) => {
@@ -22,15 +23,18 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-// Startup DB check
-(async () => {
-  try {
-    await prisma.$connect();
-    console.log("✅ Connected to Postgres at", process.env.DATABASE_URL);
-  } catch (err) {
-    console.error("❌ Failed to connect to Postgres:", err);
+// Error handler
+app.use(
+  (
+    err: any,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
   }
-})();
+);
 
 // Start server
 app.listen(PORT, () => {
