@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import prisma from "../config/database.js";
+import { prisma } from "../prisma.js";
 import {
   CreateHeroBannerRequest,
   UpdateHeroBannerRequest,
@@ -23,9 +23,9 @@ router.get("/", async (req: Request, res: Response) => {
 // GET single hero banner
 router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
     const banner = await prisma.heroBanner.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(id, 10) },
     });
     if (!banner) {
       return res.status(404).json({ error: "Banner not found" });
@@ -70,11 +70,11 @@ router.post("/", async (req: Request, res: Response) => {
 // UPDATE hero banner
 router.put("/:id", async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
     const data = req.body as UpdateHeroBannerRequest;
 
     const banner = await prisma.heroBanner.update({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(id, 10) },
       data,
     });
 
@@ -91,10 +91,10 @@ router.put("/:id", async (req: Request, res: Response) => {
 // DELETE hero banner
 router.delete("/:id", async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params as { id: string };
 
     await prisma.heroBanner.delete({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(id, 10) },
     });
 
     res.json({ message: "Banner deleted" });
