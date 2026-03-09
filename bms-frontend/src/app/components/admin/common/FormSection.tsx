@@ -7,10 +7,10 @@ interface FormSectionProps {
   mt?: number;
 }
 
-const FormSection = ({ label, children, mt = 0.5 }: FormSectionProps) => (
-  <Grid container spacing={8} sx={{ mb: 2 }}>
+const FormSection = ({ label, children }: FormSectionProps) => (
+  <Grid container sx={{ mb: 2 }}>
     <Grid item xs={12} sm={1}>
-      <Typography sx={{ fontSize: ".85rem", mt }}>{label}</Typography>
+      <Typography sx={{ fontSize: ".85rem", mt: 1.9 }}>{label}</Typography>
     </Grid>
     <Grid item xs={12} sm={11}>
       {children}

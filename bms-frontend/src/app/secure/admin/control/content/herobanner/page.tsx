@@ -1,58 +1,69 @@
 "use client";
 
-import { Box } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-
 import BreadcrumbsNav from "@/components/admin/common/BreadcrumbsNav";
-import HeroBannerForm from "@/components/admin/content/herobanner/HeroBannerForm";
-import { HEROBANNER_BREADCRUMBS } from "@/constants/herobanner";
-import { createHeroBanner } from "@/lib/api/heroBanner";
-import { HeroBanner as HeroBannerType } from "@/types/herobanner";
+import FacilityControls from "@/components/admin/common/FacilityControls";
+import FilterBar from "@/components/admin/common/FilterBar";
+import { Grid } from "@mui/material";
 
-export default function HeroBannerNewPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+interface FilterDefinition {
+  key: string;
+  label: string;
+  options?: string[];
+}
 
-  const handleSubmit = async (formData: HeroBannerType) => {
-    setIsLoading(true);
-    setError(null);
+const createHref = "/secure/admin/control/content/herobanner/new";
 
-    try {
-      // Validate image is not null
-      if (!formData.image) {
-        setError("Image is required");
-        setIsLoading(false);
-        return;
-      }
+const keyword = "keyword";
 
-      await createHeroBanner({
-        title: formData.title,
-        remarks: formData.remarks,
-        image: formData.image as string,
-        status: formData.status,
-      });
+const dropdownFilters: FilterDefinition[] = [
+  {
+    key: "status",
+    label: "Status",
+    options: ["Active", "Inactive"],
+  },
+];
 
-      // Redirect to hero banners list
-      router.push("/secure/admin/control/content/herobanner");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+function handleSelectAll() {}
 
+function handleDeleteAll() {}
+
+export default function HeroBanner() {
   return (
     <>
-      <BreadcrumbsNav crumbs={HEROBANNER_BREADCRUMBS.new} />
-      <Box sx={{ px: 6, py: 3 }}>
-        <HeroBannerForm
-          onSubmit={handleSubmit}
-          isLoading={isLoading}
-          error={error}
-        />
-      </Box>
+      <BreadcrumbsNav
+        crumbs={[
+          { label: "Content", href: "/secure/admin/control/content" },
+          { label: "Hero Banner", active: true },
+        ]}
+      />
+
+      <Grid container sx={{ px: 2 }}>
+        <Grid
+          item
+          xs={2.3}
+          sx={{
+            px: 1.5,
+            borderRight: "1px solid var(--border-color-custom-2)",
+          }}
+        >
+          <FacilityControls
+            labelSingular="Banner"
+            labelPlural="Banners"
+            onCreate={createHref}
+            onSelectAll={handleSelectAll}
+            onDeleteAll={handleDeleteAll}
+          />
+        </Grid>
+        <Grid item xs={9.7} sx={{ pl: 1.5 }}>
+          <FilterBar
+            keyword={keyword}
+            dropdownFilters={dropdownFilters}
+            onApplyFilters={(values: Record<string, string | boolean>) => {
+              console.log("Filter values:", values);
+            }}
+          />
+        </Grid>
+      </Grid>
     </>
   );
 }
