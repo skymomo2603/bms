@@ -10,5 +10,4 @@ export interface HeroBannerFormProps {
   initialData?: Partial<HeroBanner>;
   onSubmit: (data: HeroBanner) => Promise<void>;
   isLoading?: boolean;
-  error?: string | null;
 }

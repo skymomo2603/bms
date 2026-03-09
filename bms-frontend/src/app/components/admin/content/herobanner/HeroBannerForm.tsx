@@ -5,7 +5,6 @@ import {
   Upload as UploadIcon,
 } from "@mui/icons-material";
 import {
-  Alert,
   Box,
   Button,
   CircularProgress,
@@ -27,6 +26,8 @@ import {
   imageBoxSx,
   imageEmptyStateSx,
   imagePreviewSx,
+  selectFieldSx,
+  textFieldSx,
   uploadButtonSx,
 } from "./HeroBannerForm.styles";
 
@@ -54,7 +55,6 @@ export default function HeroBannerForm({
   initialData,
   onSubmit,
   isLoading = false,
-  error,
 }: HeroBannerFormProps) {
   const [formData, setFormData] = useState<HeroBanner>(
     getInitialFormData(initialData)
@@ -88,12 +88,6 @@ export default function HeroBannerForm({
   };
 
   const handleSave = async () => {
-    // Validate required fields
-    if (!formData.title.trim()) {
-      console.error("Title is required");
-      return;
-    }
-
     await onSubmit(formData);
   };
 
@@ -103,12 +97,6 @@ export default function HeroBannerForm({
 
   return (
     <>
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-
       {/* Image Section */}
       <FormSection label="Image">
         <Box sx={imageBoxSx}>
@@ -168,8 +156,7 @@ export default function HeroBannerForm({
           onChange={(e) => handleInputChange("title", e.target.value)}
           placeholder="Enter hero banner title"
           disabled={isLoading}
-          sx={{ width: { xs: "100%", sm: "24rem" }, maxWidth: "100%" }}
-          inputProps={{ style: { fontSize: ".9rem" } }}
+          sx={textFieldSx}
         />
       </FormSection>
 
@@ -182,8 +169,7 @@ export default function HeroBannerForm({
           multiline
           rows={2}
           disabled={isLoading}
-          sx={{ width: { xs: "100%", sm: "24rem" }, maxWidth: "100%" }}
-          inputProps={{ style: { fontSize: ".9rem" } }}
+          sx={textFieldSx}
         />
       </FormSection>
 
@@ -195,7 +181,7 @@ export default function HeroBannerForm({
             handleInputChange("status", e.target.value as "Active" | "Inactive")
           }
           disabled={isLoading}
-          sx={{ fontSize: ".9rem" }}
+          sx={selectFieldSx}
           MenuProps={{
             disableScrollLock: true,
             disablePortal: true,
@@ -217,7 +203,6 @@ export default function HeroBannerForm({
         <Button
           variant="contained"
           onClick={handleSave}
-          disabled={isLoading || !formData.title.trim()}
           sx={actionButtonSx.primary}
         >
           {isLoading ? (

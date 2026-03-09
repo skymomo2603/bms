@@ -95,12 +95,11 @@ export default function RootLayout({
           >
             <Avatar
               sx={{
-                width: 72,
-                height: 72,
-                bgcolor: "rgba(255,255,255,0.3)",
-                color: "white",
+                width: 70,
+                height: 70,
+                bgcolor: "white",
+                color: "rgb(0,0,0,0.16)",
                 mb: 1,
-                border: "3.5px solid white",
               }}
             />
             <Typography
@@ -109,7 +108,7 @@ export default function RootLayout({
                 fontSize: "1.1rem",
                 fontWeight: 500,
                 color: "white",
-                letterSpacing: "0.05rem",
+                letterSpacing: "0.04rem",
                 mb: 0.5,
               }}
             >
@@ -118,7 +117,7 @@ export default function RootLayout({
             <Chip
               label="Super Admin"
               sx={{
-                fontSize: "0.68rem",
+                fontSize: "0.65rem",
                 height: "20px",
                 bgcolor: "white",
                 color: "var(--text-blue-dark)",
