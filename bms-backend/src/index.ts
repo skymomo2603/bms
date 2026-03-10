@@ -1,3 +1,4 @@
+import cors from "cors";
 import "dotenv/config";
 import express, { Application } from "express";
 import heroBannerRoutes from "./routes/heroBannerRoutes.js";
@@ -7,11 +8,17 @@ const app: Application = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(express.json());
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:3001"],
+    credentials: true,
+  })
+);
+app.use(express.json({ limit: "10mb" }));
 
 // Routes
 app.use("/api/rooms", roomRoutes);
-app.use("/api/herobanner", heroBannerRoutes);
+app.use("/hero-banners", heroBannerRoutes);
 
 // Root route
 app.get("/", (_req, res) => {

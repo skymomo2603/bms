@@ -11,7 +11,7 @@ model HeroBanner {
   id        Int      @id @default(autoincrement())
   title     String
   remarks   String
-  image     String
+  image     String   @db.Text
   status    String   @default("Active")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

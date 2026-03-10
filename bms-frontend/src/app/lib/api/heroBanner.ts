@@ -7,6 +7,21 @@ export interface HeroBannerPayload {
   status: string;
 }
 
+async function parseErrorResponse(response: Response): Promise<string> {
+  const contentType = response.headers.get("content-type");
+  try {
+    if (contentType?.includes("application/json")) {
+      const error = await response.json();
+      return error.error || error.message || `Error ${response.status}`;
+    } else {
+      const text = await response.text();
+      return text || `Error ${response.status}`;
+    }
+  } catch {
+    return `Error ${response.status}: ${response.statusText}`;
+  }
+}
+
 export async function createHeroBanner(data: HeroBannerPayload) {
   const response = await fetch(`${API_BASE_URL}/hero-banners`, {
     method: "POST",
@@ -17,8 +32,8 @@ export async function createHeroBanner(data: HeroBannerPayload) {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to create hero banner");
+    const errorMessage = await parseErrorResponse(response);
+    throw new Error(errorMessage);
   }
 
   return response.json();
@@ -57,8 +72,8 @@ export async function updateHeroBanner(
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to update hero banner");
+    const errorMessage = await parseErrorResponse(response);
+    throw new Error(errorMessage);
   }
 
   return response.json();
@@ -70,8 +85,8 @@ export async function deleteHeroBanner(id: number) {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "Failed to delete hero banner");
+    const errorMessage = await parseErrorResponse(response);
+    throw new Error(errorMessage);
   }
 
   return response.json();
