@@ -14,7 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import FormSection from "@/components/admin/common/FormSection";
 import { FORM_DEFAULTS, STATUS_OPTIONS } from "@/constants/herobanner";
@@ -59,6 +59,7 @@ export default function HeroBannerForm({
   const [formData, setFormData] = useState<HeroBanner>(
     getInitialFormData(initialData)
   );
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -74,6 +75,10 @@ export default function HeroBannerForm({
         }
       };
       reader.readAsDataURL(file);
+    }
+    // Reset file input value
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -113,7 +118,7 @@ export default function HeroBannerForm({
               <Typography
                 sx={{ color: "var(--text-grey-dark)", fontSize: ".9rem" }}
               >
-                No image selected
+                No image uploaded
               </Typography>
             </Box>
           )}
@@ -128,6 +133,7 @@ export default function HeroBannerForm({
             >
               Upload Image
               <VisuallyHiddenInput
+                ref={fileInputRef}
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}

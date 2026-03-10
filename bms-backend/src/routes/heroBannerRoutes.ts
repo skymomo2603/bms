@@ -1,110 +1,32 @@
-import { Request, Response, Router } from "express";
-import { prisma } from "../prisma.js";
+import { Router } from "express";
 import {
-  CreateHeroBannerRequest,
-  UpdateHeroBannerRequest,
-} from "../types/index.js";
+  createHeroBanner,
+  deleteHeroBanner,
+  getAllHeroBanners,
+  getHeroBannerById,
+  updateHeroBanner,
+} from "../controllers/heroBannerController.js";
 
 const router = Router();
 
+/**
+ * Hero Banner Routes
+ * All routes are prefixed with /hero-banners in index.ts
+ */
+
 // GET all hero banners
-router.get("/", async (req: Request, res: Response) => {
-  try {
-    const banners = await prisma.heroBanner.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-    res.json(banners);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch banners" });
-  }
-});
+router.get("/", getAllHeroBanners);
 
-// GET single hero banner
-router.get("/:id", async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params as { id: string };
-    const banner = await prisma.heroBanner.findUnique({
-      where: { id: parseInt(id, 10) },
-    });
-    if (!banner) {
-      return res.status(404).json({ error: "Banner not found" });
-    }
-    res.json(banner);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch banner" });
-  }
-});
+// GET single hero banner by ID
+router.get("/:id", getHeroBannerById);
 
-// CREATE hero banner
-router.post("/", async (req: Request, res: Response) => {
-  try {
-    const { title, remarks, image, status } =
-      req.body as CreateHeroBannerRequest;
-
-    // Validation
-    if (!title || !remarks || !image) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    const banner = await prisma.heroBanner.create({
-      data: {
-        title,
-        remarks,
-        image,
-        status,
-      },
-    });
-
-    res.status(201).json(banner);
-  } catch (error: any) {
-    console.error(error);
-    if (error.code === "P2002") {
-      return res.status(400).json({ error: "Title already exists" });
-    }
-    res.status(500).json({ error: "Failed to create banner" });
-  }
-});
+// CREATE new hero banner
+router.post("/", createHeroBanner);
 
 // UPDATE hero banner
-router.put("/:id", async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params as { id: string };
-    const data = req.body as UpdateHeroBannerRequest;
-
-    const banner = await prisma.heroBanner.update({
-      where: { id: parseInt(id, 10) },
-      data,
-    });
-
-    res.json(banner);
-  } catch (error: any) {
-    console.error(error);
-    if (error.code === "P2025") {
-      return res.status(404).json({ error: "Banner not found" });
-    }
-    res.status(500).json({ error: "Failed to update banner" });
-  }
-});
+router.put("/:id", updateHeroBanner);
 
 // DELETE hero banner
-router.delete("/:id", async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params as { id: string };
-
-    await prisma.heroBanner.delete({
-      where: { id: parseInt(id, 10) },
-    });
-
-    res.json({ message: "Banner deleted" });
-  } catch (error: any) {
-    console.error(error);
-    if (error.code === "P2025") {
-      return res.status(404).json({ error: "Banner not found" });
-    }
-    res.status(500).json({ error: "Failed to delete banner" });
-  }
-});
+router.delete("/:id", deleteHeroBanner);
 
 export default router;

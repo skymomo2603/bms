@@ -64,7 +64,7 @@ export const uploadButtonSx = {
 };
 
 // Container/Box Styles
-export const inputBoxSx = {
+export const largeImageBoxSx = {
   border: "1px solid var(--border-color-field)",
   borderRadius: 1,
   p: 2,

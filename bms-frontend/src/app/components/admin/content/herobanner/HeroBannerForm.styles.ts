@@ -2,7 +2,7 @@ import {
   buttonContainerSx,
   deleteButtonSx,
   emptyStateSx,
-  inputBoxSx,
+  largeImageBoxSx,
   previewImageSx,
   primaryButtonSx,
   secondaryButtonSx,
@@ -11,7 +11,7 @@ import {
   uploadButtonSx,
 } from "@/components/admin/styles/commonStyles";
 
-export const imageBoxSx = inputBoxSx;
+export const imageBoxSx = largeImageBoxSx;
 
 export const imagePreviewSx = previewImageSx;
 
