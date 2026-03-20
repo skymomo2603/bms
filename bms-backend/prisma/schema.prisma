@@ -7,12 +7,19 @@ datasource db {
   schemas  = ["booking", "content"]
 }
 
+enum HeroBannerStatus {
+  Active
+  Inactive
+
+  @@schema("content")
+}
+
 model HeroBanner {
   id        Int      @id @default(autoincrement())
   title     String
   remarks   String
   image     String   @db.Text
-  status    String   @default("Active")
+  status    HeroBannerStatus @default(Active)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

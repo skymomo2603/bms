@@ -14,11 +14,12 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import FormSection from "@/components/admin/common/FormSection";
 import { FORM_DEFAULTS, STATUS_OPTIONS } from "@/constants/herobanner";
-import { HeroBanner, HeroBannerFormProps } from "@/types/herobanner";
+import { HeroBannerFormData, HeroBannerFormProps } from "@/types/herobanner";
+import ImageCropDialog from "./ImageCropDialog";
 import {
   actionButtonSx,
   buttonContainerSx,
@@ -43,47 +44,60 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-const getInitialFormData = (initialData?: Partial<HeroBanner>): HeroBanner => ({
+const getInitialFormData = (
+  initialData?: Partial<HeroBannerFormData>
+): HeroBannerFormData => ({
   title: initialData?.title ?? FORM_DEFAULTS.title,
   remarks: initialData?.remarks ?? FORM_DEFAULTS.remarks,
   status: initialData?.status ?? FORM_DEFAULTS.status,
   image: initialData?.image ?? FORM_DEFAULTS.image,
-  ...(initialData?.id && { id: initialData.id }),
 });
 
 export default function HeroBannerForm({
   initialData,
   onSubmit,
+  onNew,
   isLoading = false,
 }: HeroBannerFormProps) {
-  const [formData, setFormData] = useState<HeroBanner>(
+  const [formData, setFormData] = useState<HeroBannerFormData>(
     getInitialFormData(initialData)
   );
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setFormData(getInitialFormData(initialData));
+  }, [initialData]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result;
-        if (typeof result === "string") {
-          setFormData((prev) => ({
-            ...prev,
-            image: result,
-          }));
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-    // Reset file input value
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result;
+      if (typeof result === "string") {
+        setCropSrc(result);
+      }
+    };
+    reader.readAsDataURL(file);
+
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
+  const handleCropConfirm = (croppedImage: string) => {
+    setFormData((prev) => ({ ...prev, image: croppedImage }));
+    setCropSrc(null);
+  };
+
+  const handleCropCancel = () => {
+    setCropSrc(null);
+  };
+
   const handleInputChange = (
-    field: keyof Omit<HeroBanner, "id">,
+    field: keyof HeroBannerFormData,
     value: string | null
   ) => {
     setFormData((prev) => ({
@@ -96,12 +110,15 @@ export default function HeroBannerForm({
     await onSubmit(formData);
   };
 
-  const handleClear = () => {
-    setFormData(getInitialFormData());
-  };
-
   return (
     <>
+      <ImageCropDialog
+        open={!!cropSrc}
+        imageSrc={cropSrc ?? ""}
+        onConfirm={handleCropConfirm}
+        onCancel={handleCropCancel}
+      />
+
       {/* Image Section */}
       <FormSection label="Image">
         <Box sx={imageBoxSx}>
@@ -222,7 +239,7 @@ export default function HeroBannerForm({
         </Button>
         <Button
           variant="outlined"
-          onClick={handleClear}
+          onClick={onNew}
           disabled={isLoading}
           sx={actionButtonSx.secondary}
         >

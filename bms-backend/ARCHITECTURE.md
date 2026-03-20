@@ -172,6 +172,7 @@ validateUpdateHeroBanner(data): string[]
 - Validates data types
 - Checks enum values (Active/Inactive)
 - Trims whitespace from strings
+- Implemented in `src/utils/heroBanner.ts` to keep controllers focused on request handling
 
 ### 3. **Prisma Error Codes**
 
@@ -184,6 +185,7 @@ validateUpdateHeroBanner(data): string[]
 - All functions have TypeScript types
 - Request body validated against types
 - Response always matches model shape
+- Hero banner status is constrained in both TypeScript request types and Prisma schema
 
 ---
 
@@ -198,6 +200,12 @@ validateUpdateHeroBanner(data): string[]
 | POST   | `/hero-banners`     | Create new banner                  | 201 / 400       |
 | PUT    | `/hero-banners/:id` | Update banner                      | 200 / 400 / 404 |
 | DELETE | `/hero-banners/:id` | Delete banner                      | 200 / 404       |
+
+Hero Banner behavior notes:
+
+- `status` defaults to `Active` if omitted on create
+- only one hero banner remains `Active` at a time
+- `status` is DB-constrained through Prisma enum-backed schema
 
 ### Rooms
 
@@ -289,13 +297,11 @@ app.use((req, res, next) => {
 });
 ```
 
-### 3. **Extract Validation into Utils**
+### 3. **Standardize Validation Utilities**
 
-Create `src/utils/validators.ts` to keep controllers cleaner:
+Hero Banner validation is already extracted into `src/utils/heroBanner.ts`.
 
-```typescript
-export function validateHeroBanner(data: any): ValidationResult;
-```
+**Recommendation:** apply the same pattern to other resources so controllers stay thin and consistent.
 
 ### 4. **Add Error Handling Middleware**
 
@@ -315,19 +321,11 @@ Help debug requests flowing through your system:
 const requestId = req.headers["x-request-id"] || generateId();
 ```
 
-### 6. **Add CORS Configuration**
+### 6. **Refine CORS Configuration**
 
-Currently not configured - needed for frontend to call backend:
+CORS is already configured in `src/index.ts`.
 
-```typescript
-import cors from "cors";
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-  })
-);
-```
+**Recommendation:** move allowed origins into environment variables so staging and production can be configured without code changes.
 
 ---
 
@@ -431,5 +429,6 @@ To add a new resource (e.g., `Blog`):
 4. **Validation** ensures data integrity
 5. **RESTful Design** follows web standards
 6. **Comments & Documentation** help future developers
+7. **Contract Alignment** keeps frontend DTOs, backend request types, and database constraints synchronized
 
 Study this pattern and apply it to all future features!

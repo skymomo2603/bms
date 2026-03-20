@@ -4,6 +4,10 @@ import {
   CreateHeroBannerRequest,
   UpdateHeroBannerRequest,
 } from "../types/index.js";
+import {
+  validateCreateHeroBanner,
+  validateUpdateHeroBanner,
+} from "../utils/heroBanner.js";
 
 /**
  * GET all hero banners
@@ -82,14 +86,33 @@ export const createHeroBanner = async (
       return;
     }
 
-    const banner = await prisma.heroBanner.create({
-      data: {
-        title: title.trim(),
-        remarks: remarks.trim(),
-        image: image.trim(),
-        status: status || "Active",
-      },
-    });
+    const nextStatus = status || "Active";
+
+    const banner =
+      nextStatus === "Active"
+        ? await prisma.$transaction(async (tx) => {
+            await tx.heroBanner.updateMany({
+              where: {},
+              data: { status: "Inactive" },
+            });
+
+            return tx.heroBanner.create({
+              data: {
+                title: title.trim(),
+                remarks: remarks.trim(),
+                image: image.trim(),
+                status: nextStatus,
+              },
+            });
+          })
+        : await prisma.heroBanner.create({
+            data: {
+              title: title.trim(),
+              remarks: remarks.trim(),
+              image: image.trim(),
+              status: nextStatus,
+            },
+          });
 
     res.status(201).json(banner);
   } catch (error: any) {
@@ -139,10 +162,25 @@ export const updateHeroBanner = async (
       ...(data.status && { status: data.status }),
     };
 
-    const banner = await prisma.heroBanner.update({
-      where: { id: parsedId },
-      data: updateData,
-    });
+    const banner =
+      data.status === "Active"
+        ? await prisma.$transaction(async (tx) => {
+            await tx.heroBanner.updateMany({
+              where: {
+                id: { not: parsedId },
+              },
+              data: { status: "Inactive" },
+            });
+
+            return tx.heroBanner.update({
+              where: { id: parsedId },
+              data: updateData,
+            });
+          })
+        : await prisma.heroBanner.update({
+            where: { id: parsedId },
+            data: updateData,
+          });
 
     res.json(banner);
   } catch (error: any) {
@@ -192,51 +230,42 @@ export const deleteHeroBanner = async (
 };
 
 /**
+ * BULK DELETE hero banners
+ * @route DELETE /hero-banners/bulk
+ */
+export const deleteHeroBannersBulk = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { ids } = req.body as { ids: unknown };
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      res.status(400).json({ error: "ids must be a non-empty array" });
+      return;
+    }
+
+    const parsedIds = (ids as unknown[]).map((id) => parseInt(String(id), 10));
+
+    if (parsedIds.some(isNaN)) {
+      res.status(400).json({ error: "All ids must be valid integers" });
+      return;
+    }
+
+    const { count } = await prisma.heroBanner.deleteMany({
+      where: { id: { in: parsedIds } },
+    });
+
+    res.json({ message: `${count} hero banner(s) deleted successfully` });
+  } catch (error) {
+    console.error("Error bulk deleting hero banners:", error);
+    res.status(500).json({ error: "Failed to delete hero banners" });
+  }
+};
+
+/**
  * Validation helper for CREATE request
  */
-function validateCreateHeroBanner(data: CreateHeroBannerRequest): string[] {
-  const errors: string[] = [];
-
-  if (!data.title || !data.title.trim()) {
-    errors.push("Title is required");
-  }
-
-  if (!data.image || !data.image.trim()) {
-    errors.push("Image is required");
-  }
-
-  if (data.remarks && typeof data.remarks !== "string") {
-    errors.push("Remarks must be a string");
-  }
-
-  if (data.status && !["Active", "Inactive"].includes(data.status)) {
-    errors.push("Status must be 'Active' or 'Inactive'");
-  }
-
-  return errors;
-}
-
 /**
  * Validation helper for UPDATE request
  */
-function validateUpdateHeroBanner(data: UpdateHeroBannerRequest): string[] {
-  const errors: string[] = [];
-
-  if (data.title !== undefined && !data.title.trim()) {
-    errors.push("Title cannot be empty");
-  }
-
-  if (data.image !== undefined && !data.image.trim()) {
-    errors.push("Image cannot be empty");
-  }
-
-  if (data.remarks !== undefined && typeof data.remarks !== "string") {
-    errors.push("Remarks must be a string");
-  }
-
-  if (data.status && !["Active", "Inactive"].includes(data.status)) {
-    errors.push("Status must be 'Active' or 'Inactive'");
-  }
-
-  return errors;
-}

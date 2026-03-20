@@ -1,17 +1,22 @@
 export const STATUS_OPTIONS = ["Active", "Inactive"] as const;
 
-export const HEROBANNER_BREADCRUMBS = {
-  new: [
-    { label: "Content", href: "/secure/admin/control/content" },
-    { label: "Hero Banner", href: "/secure/admin/control/content/herobanner" },
-    { label: "New", active: true },
-  ],
-  edit: (id: string) => [
-    { label: "Content", href: "/secure/admin/control/content" },
-    { label: "Hero Banner", href: "/secure/admin/control/content/herobanner" },
-    { label: "Edit", active: true },
-  ],
+export const HEROBANNER_ROUTES = {
+  list: "/secure/admin/control/content/herobanner",
+  entry: "/secure/admin/control/content/herobanner/entry",
+  entryEdit: (id: number) =>
+    `/secure/admin/control/content/herobanner/entry?id=${id}`,
 };
+
+export const HEROBANNER_LIST_BREADCRUMBS = [
+  { label: "Content", href: "/secure/admin/control/content" },
+  { label: "Hero Banner", active: true },
+];
+
+export const HEROBANNER_ENTRY_BREADCRUMBS = [
+  { label: "Content", href: "/secure/admin/control/content" },
+  { label: "Hero Banner", href: HEROBANNER_ROUTES.list },
+  { label: "Entry", active: true },
+];
 
 export const FORM_DEFAULTS = {
   title: "",

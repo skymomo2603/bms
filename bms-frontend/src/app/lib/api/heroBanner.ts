@@ -1,10 +1,13 @@
+import { HeroBannerDto, HeroBannerStatus } from "@/types/herobanner";
+import { toHeroBannerDto, toHeroBannerDtos } from "@/utils/herobanner";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 export interface HeroBannerPayload {
   title: string;
   remarks: string;
   image: string;
-  status: string;
+  status: HeroBannerStatus;
 }
 
 async function parseErrorResponse(response: Response): Promise<string> {
@@ -22,7 +25,9 @@ async function parseErrorResponse(response: Response): Promise<string> {
   }
 }
 
-export async function createHeroBanner(data: HeroBannerPayload) {
+export async function createHeroBanner(
+  data: HeroBannerPayload
+): Promise<HeroBannerDto> {
   const response = await fetch(`${API_BASE_URL}/hero-banners`, {
     method: "POST",
     headers: {
@@ -36,39 +41,54 @@ export async function createHeroBanner(data: HeroBannerPayload) {
     throw new Error(errorMessage);
   }
 
-  return response.json();
+  return toHeroBannerDto(await response.json());
 }
 
-export async function getHeroBanners() {
+export async function getHeroBanners(): Promise<HeroBannerDto[]> {
   const response = await fetch(`${API_BASE_URL}/hero-banners`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch hero banners");
   }
 
-  return response.json();
+  return toHeroBannerDtos(await response.json());
 }
 
-export async function getHeroBanner(id: number) {
+export async function getHeroBanner(id: number): Promise<HeroBannerDto> {
   const response = await fetch(`${API_BASE_URL}/hero-banners/${id}`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch hero banner");
   }
 
-  return response.json();
+  return toHeroBannerDto(await response.json());
 }
 
 export async function updateHeroBanner(
   id: number,
   data: Partial<HeroBannerPayload>
-) {
+): Promise<HeroBannerDto> {
   const response = await fetch(`${API_BASE_URL}/hero-banners/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorMessage = await parseErrorResponse(response);
+    throw new Error(errorMessage);
+  }
+
+  return toHeroBannerDto(await response.json());
+}
+
+export async function deleteHeroBanners(ids: number[]) {
+  const response = await fetch(`${API_BASE_URL}/hero-banners/bulk`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ids }),
   });
 
   if (!response.ok) {
