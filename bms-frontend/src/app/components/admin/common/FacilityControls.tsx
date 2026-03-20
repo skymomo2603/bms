@@ -20,6 +20,8 @@ interface FacilityControlProps {
   onEditAll?: FacilityAction;
   onSetStatusAll?: FacilityStatusAction;
   onDeleteAll?: FacilityAction;
+  deleteAllDisabled?: boolean;
+  selectedCount?: number;
   statusOptions?: string[];
 }
 
@@ -54,6 +56,8 @@ export default function FacilityControl({
   onEditAll,
   onSetStatusAll,
   onDeleteAll,
+  deleteAllDisabled = true,
+  selectedCount = 0,
   statusOptions = ["Active", "Inactive"],
 }: FacilityControlProps) {
   const [status, setStatus] = useState(statusOptions[0] ?? "");
@@ -79,7 +83,16 @@ export default function FacilityControl({
           fontSize: "0.8rem",
         }}
       >
-        {labelPlural} Selected:
+        {labelPlural} Selected:{" "}
+        <Typography
+          component="span"
+          sx={{
+            fontSize: "0.85rem",
+            ml: 0.5,
+          }}
+        >
+          {selectedCount}
+        </Typography>
       </Typography>
 
       {onSelectAll && (
@@ -153,12 +166,18 @@ export default function FacilityControl({
       {onDeleteAll && (
         <Button
           onClick={onDeleteAll}
+          disabled={deleteAllDisabled}
           sx={{
             ...actionButtonSx,
             mt: 4,
             bgcolor: "var(--info-bgcolor-delete)",
             color: "white",
             "&:hover": { bgcolor: "var(--info-bgcolor-delete-light)" },
+            "&.Mui-disabled": {
+              bgcolor: "var(--info-bgcolor-delete)",
+              color: "white",
+              filter: "brightness(0.92)",
+            },
           }}
         >
           <DeleteOutlinedIcon />

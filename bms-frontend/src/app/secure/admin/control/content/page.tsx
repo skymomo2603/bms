@@ -1,30 +1,14 @@
 "use client";
 
-import AdminNavItem from "@/components/admin/common/AdminNavItem";
 import BreadcrumbsNav from "@/components/admin/common/BreadcrumbsNav";
-import CollectionsOutlinedIcon from "@mui/icons-material/CollectionsOutlined";
-import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
+import AdminNavItem from "@/components/admin/common/NavItem";
+import { CONTENT_BREADCRUMBS, CONTENT_NAV_ITEMS } from "@/constants/content";
 
 export default function ContentTab() {
-  const navItems = [
-    {
-      label: "Hero Banner",
-      href: "/secure/admin/control/content/herobanner",
-      icon: InsertPhotoOutlinedIcon,
-      iconSize: 50,
-    },
-    {
-      label: "Carousel",
-      href: "/secure/admin/control/content/carousel",
-      icon: CollectionsOutlinedIcon,
-      iconSize: 50,
-    },
-  ];
-
   return (
     <>
-      <BreadcrumbsNav crumbs={[{ label: "Content", active: true }]} />
-      <AdminNavItem navItems={navItems} />
+      <BreadcrumbsNav crumbs={CONTENT_BREADCRUMBS} />
+      <AdminNavItem navItems={CONTENT_NAV_ITEMS} />
     </>
   );
 }

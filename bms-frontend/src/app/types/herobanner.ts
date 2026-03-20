@@ -1,13 +1,23 @@
-export interface HeroBanner {
-  id?: string;
+export type HeroBannerStatus = "Active" | "Inactive";
+
+export interface HeroBannerDto {
+  id: number;
   title: string;
   remarks: string;
-  image: string | File | null;
-  status: "Active" | "Inactive";
+  image: string;
+  status: HeroBannerStatus;
+}
+
+export interface HeroBannerFormData {
+  title: string;
+  remarks: string;
+  image: string | null;
+  status: HeroBannerStatus;
 }
 
 export interface HeroBannerFormProps {
-  initialData?: Partial<HeroBanner>;
-  onSubmit: (data: HeroBanner) => Promise<void>;
+  initialData?: Partial<HeroBannerFormData>;
+  onSubmit: (data: HeroBannerFormData) => Promise<void>;
+  onNew: () => void;
   isLoading?: boolean;
 }

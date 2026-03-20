@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createHeroBanner,
   deleteHeroBanner,
+  deleteHeroBannersBulk,
   getAllHeroBanners,
   getHeroBannerById,
   updateHeroBanner,
@@ -25,6 +26,9 @@ router.post("/", createHeroBanner);
 
 // UPDATE hero banner
 router.put("/:id", updateHeroBanner);
+
+// DELETE hero banners (bulk)
+router.delete("/bulk", deleteHeroBannersBulk);
 
 // DELETE hero banner
 router.delete("/:id", deleteHeroBanner);

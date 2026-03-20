@@ -98,7 +98,7 @@ export default function RootLayout({
                 width: 70,
                 height: 70,
                 bgcolor: "white",
-                color: "rgb(0,0,0,0.16)",
+                color: "#82ADC6",
                 mb: 1,
               }}
             />
@@ -117,7 +117,7 @@ export default function RootLayout({
             <Chip
               label="Super Admin"
               sx={{
-                fontSize: "0.65rem",
+                fontSize: "0.55rem",
                 height: "20px",
                 bgcolor: "white",
                 color: "var(--text-blue-dark)",
