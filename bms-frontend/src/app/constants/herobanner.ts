@@ -1,3 +1,5 @@
+import type { AdminBreadcrumb } from "@/types/admin";
+
 export const STATUS_OPTIONS = ["Active", "Inactive"] as const;
 
 export const HEROBANNER_ROUTES = {
@@ -7,12 +9,12 @@ export const HEROBANNER_ROUTES = {
     `/secure/admin/control/content/herobanner/entry?id=${id}`,
 };
 
-export const HEROBANNER_LIST_BREADCRUMBS = [
+export const HEROBANNER_LIST_BREADCRUMBS: AdminBreadcrumb[] = [
   { label: "Content", href: "/secure/admin/control/content" },
   { label: "Hero Banner", active: true },
 ];
 
-export const HEROBANNER_ENTRY_BREADCRUMBS = [
+export const HEROBANNER_ENTRY_BREADCRUMBS: AdminBreadcrumb[] = [
   { label: "Content", href: "/secure/admin/control/content" },
   { label: "Hero Banner", href: HEROBANNER_ROUTES.list },
   { label: "Entry", active: true },

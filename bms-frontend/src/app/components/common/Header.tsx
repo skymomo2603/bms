@@ -16,12 +16,11 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 
-const navItems = [
-  { label: "Home", href: "/" },
-  { label: "Rooms", href: "/rooms" },
-  { label: "FAQ", href: "/faq" },
-  { label: "Contact Us", href: "/contact" },
-];
+import {
+  ADMIN_CONTROL_ROUTE,
+  PUBLIC_NAV_ITEMS,
+  SITE_NAME,
+} from "@/constants/site";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -32,12 +31,12 @@ export default function Header() {
 
   const drawerContent = (
     <Box sx={{ width: 250, p: 2 }}>
-      {navItems.map((item, idx) => (
+      {PUBLIC_NAV_ITEMS.map((item, idx) => (
         <Box key={item.href}>
           <Link href={item.href} passHref>
             <Button fullWidth>{item.label}</Button>
           </Link>
-          {idx < navItems.length - 1 && <Divider />}
+          {idx < PUBLIC_NAV_ITEMS.length - 1 && <Divider />}
         </Box>
       ))}
     </Box>
@@ -47,11 +46,13 @@ export default function Header() {
     <>
       <AppBar
         position="fixed"
+        elevation={0}
         sx={{
           background:
             "linear-gradient(to right, var(--theme-color-dark) 0%, var(--theme-color-light) 63%)",
           mt: 0.125,
           px: 1,
+          boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.28)",
         }}
       >
         <Toolbar
@@ -67,14 +68,14 @@ export default function Header() {
               letterSpacing: "0.15rem",
             }}
           >
-            KsVill Hotel
+            {SITE_NAME}
           </Typography>
 
           {/* Desktop nav */}
           {!isMobile && (
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Box sx={{ mx: 3 }}>
-                <Link href="/secure/admin/control" passHref>
+                <Link href={ADMIN_CONTROL_ROUTE} passHref>
                   <Button
                     variant="contained"
                     sx={{
@@ -91,7 +92,7 @@ export default function Header() {
                 </Link>
               </Box>
 
-              {navItems.map((item, idx) => (
+              {PUBLIC_NAV_ITEMS.map((item, idx) => (
                 <Box
                   sx={{ display: "flex", alignItems: "center" }}
                   key={item.href}
@@ -101,7 +102,7 @@ export default function Header() {
                       sx={{
                         display: "flex",
                         alignItems: "center",
-                        width: 115,
+                        width: 120,
                         color: "white",
                         fontSize: "0.75rem",
                         textTransform: "none",
@@ -113,7 +114,7 @@ export default function Header() {
                   </Link>
 
                   {/* Divider only if not the last item */}
-                  {idx < navItems.length - 1 && (
+                  {idx < PUBLIC_NAV_ITEMS.length - 1 && (
                     <Divider
                       orientation="vertical"
                       flexItem

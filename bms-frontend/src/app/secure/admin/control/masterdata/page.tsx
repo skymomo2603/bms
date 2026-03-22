@@ -2,22 +2,16 @@
 
 import BreadcrumbsNav from "@/components/admin/common/BreadcrumbsNav";
 import AdminNavItem from "@/components/admin/common/NavItem";
-import ConstructionOutlinedIcon from "@mui/icons-material/ConstructionOutlined";
+import {
+  MASTER_DATA_BREADCRUMBS,
+  MASTER_DATA_NAV_ITEMS,
+} from "@/constants/adminNav";
 
 export default function MasterDataTab() {
-  const navItems = [
-    {
-      label: "To Do",
-      href: "#",
-      icon: ConstructionOutlinedIcon,
-      iconSize: 50,
-    },
-  ];
-
   return (
     <>
-      <BreadcrumbsNav crumbs={[{ label: "Mater Data", active: true }]} />
-      <AdminNavItem navItems={navItems} />
+      <BreadcrumbsNav crumbs={MASTER_DATA_BREADCRUMBS} />
+      <AdminNavItem navItems={MASTER_DATA_NAV_ITEMS} />
     </>
   );
 }

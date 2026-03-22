@@ -1,14 +1,9 @@
 import { STATUS_OPTIONS } from "@/constants/herobanner";
-
-export interface HeroBannerFilterDefinition {
-  key: string;
-  label: string;
-  options?: string[];
-}
+import type { AdminFilterDefinition } from "@/types/admin";
 
 export const HEROBANNER_FILTER_KEY = "keyword";
 
-export const HEROBANNER_DROPDOWN_FILTERS: HeroBannerFilterDefinition[] = [
+export const HEROBANNER_DROPDOWN_FILTERS: AdminFilterDefinition[] = [
   {
     key: "status",
     label: "Status",

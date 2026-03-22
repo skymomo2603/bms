@@ -2,6 +2,8 @@
 
 import { Box, Divider, Typography } from "@mui/material";
 
+import { SITE_COPYRIGHT, SITE_VERSION } from "@/constants/site";
+
 export default function Footer() {
   return (
     <Box
@@ -22,10 +24,8 @@ export default function Footer() {
       />
 
       <div className="flex justify-between items-center">
-        <Typography variant="body2">
-          ©2026 KsVill Hotel. All rights reserved.
-        </Typography>
-        <Typography variant="body2">Version X.X</Typography>
+        <Typography variant="body2">{SITE_COPYRIGHT}</Typography>
+        <Typography variant="body2">{SITE_VERSION}</Typography>
       </div>
     </Box>
   );

@@ -3,6 +3,7 @@ import {
   createHeroBanner,
   deleteHeroBanner,
   deleteHeroBannersBulk,
+  getActiveHeroBanner,
   getAllHeroBanners,
   getHeroBannerById,
   updateHeroBanner,
@@ -18,6 +19,12 @@ const router = Router();
 // GET all hero banners
 router.get("/", getAllHeroBanners);
 
+// GET active hero banner
+router.get("/active", getActiveHeroBanner);
+
+// DELETE hero banners (bulk)
+router.delete("/bulk", deleteHeroBannersBulk);
+
 // GET single hero banner by ID
 router.get("/:id", getHeroBannerById);
 
@@ -26,9 +33,6 @@ router.post("/", createHeroBanner);
 
 // UPDATE hero banner
 router.put("/:id", updateHeroBanner);
-
-// DELETE hero banners (bulk)
-router.delete("/bulk", deleteHeroBannersBulk);
 
 // DELETE hero banner
 router.delete("/:id", deleteHeroBanner);

@@ -2,22 +2,13 @@
 
 import BreadcrumbsNav from "@/components/admin/common/BreadcrumbsNav";
 import AdminNavItem from "@/components/admin/common/NavItem";
-import ConstructionOutlinedIcon from "@mui/icons-material/ConstructionOutlined";
+import { USER_BREADCRUMBS, USER_NAV_ITEMS } from "@/constants/adminNav";
 
 export default function UsersTab() {
-  const navItems = [
-    {
-      label: "To Do",
-      href: "#",
-      icon: ConstructionOutlinedIcon,
-      iconSize: 50,
-    },
-  ];
-
   return (
     <>
-      <BreadcrumbsNav crumbs={[{ label: "Users", active: true }]} />
-      <AdminNavItem navItems={navItems} />
+      <BreadcrumbsNav crumbs={USER_BREADCRUMBS} />
+      <AdminNavItem navItems={USER_NAV_ITEMS} />
     </>
   );
 }

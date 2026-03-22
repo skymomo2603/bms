@@ -4,17 +4,18 @@ import ArrowBackIosNewOutlinedIcon from "@mui/icons-material/ArrowBackIosNewOutl
 import { Box, Breadcrumbs, Link } from "@mui/material";
 import NextLink from "next/link";
 
-type Crumb = {
-  label: string;
-  href?: string;
-  active?: boolean;
-};
+import type { AdminBreadcrumb } from "@/types/admin";
 
 type BreadcrumbsNavProps = {
-  crumbs: Crumb[];
+  crumbs: AdminBreadcrumb[];
 };
 
 export default function BreadcrumbsNav({ crumbs }: BreadcrumbsNavProps) {
+  const previousCrumb = crumbs[crumbs.length - 2];
+  const currentCrumb = crumbs[crumbs.length - 1];
+  const backHref =
+    crumbs.length > 1 && currentCrumb?.active ? previousCrumb?.href : undefined;
+
   return (
     <Box
       position="relative"
@@ -35,29 +36,35 @@ export default function BreadcrumbsNav({ crumbs }: BreadcrumbsNavProps) {
           },
         }}
       >
-        {crumbs.map((crumb, index) => (
-          <Link
-            key={index}
-            component={crumb.active ? "span" : NextLink}
-            href={crumb.active ? undefined : crumb.href || "#"}
-            underline={crumb.active ? "none" : "hover"}
-            color={crumb.active ? "text.primary" : "inherit"}
-            sx={{
-              fontSize: ".8rem",
-              color: "var(--text-light)",
-              pointerEvents: crumb.active ? "none" : "auto",
-              cursor: crumb.active ? "default" : "pointer",
-            }}
-          >
-            {crumb.label}
-          </Link>
-        ))}
+        {crumbs.map((crumb) => {
+          const isLink = !crumb.active && Boolean(crumb.href);
+
+          return (
+            <Link
+              key={`${crumb.label}-${crumb.href ?? (crumb.active ? "active" : "static")}`}
+              component={isLink ? NextLink : "span"}
+              href={isLink ? crumb.href : undefined}
+              underline={crumb.active ? "none" : "hover"}
+              color={crumb.active ? "text.primary" : "inherit"}
+              sx={{
+                fontSize: ".8rem",
+                color: "var(--text-light)",
+                pointerEvents: crumb.active ? "none" : "auto",
+                cursor: crumb.active ? "default" : "pointer",
+              }}
+            >
+              {crumb.label}
+            </Link>
+          );
+        })}
       </Breadcrumbs>
-      {crumbs.length > 1 && crumbs[crumbs.length - 1].active && (
-        <NextLink href={crumbs[crumbs.length - 2]?.href || "#"}>
+      {backHref && (
+        <NextLink href={backHref}>
           <Box
-            className="absolute top-1 right-0"
             sx={{
+              position: "absolute",
+              top: 4,
+              right: 0,
               bgcolor: "white",
               borderRadius: "50%",
               boxShadow: "0px 0px 3px var(--box-shadow)",
