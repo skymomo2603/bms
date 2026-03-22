@@ -1,12 +1,5 @@
 "use client";
 
-import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import MeetingRoomRoundedIcon from "@mui/icons-material/MeetingRoomRounded";
-import MenuBookRoundedIcon from "@mui/icons-material/MenuBookRounded";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import StorageRoundedIcon from "@mui/icons-material/StorageRounded";
-
 import {
   Avatar,
   Box,
@@ -20,44 +13,13 @@ import {
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 
+import { ADMIN_SIDEBAR_ITEMS } from "@/constants/adminNav";
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const navItems = [
-    {
-      label: "Dashboard",
-      href: "/secure/admin/control",
-      icon: DashboardIcon,
-    },
-    {
-      label: "Bookings",
-      href: "/secure/admin/control/bookings",
-      icon: MenuBookRoundedIcon,
-    },
-    {
-      label: "Rooms",
-      href: "/secure/admin/control/rooms",
-      icon: MeetingRoomRoundedIcon,
-    },
-    {
-      label: "Content",
-      href: "/secure/admin/control/content",
-      icon: ArticleRoundedIcon,
-    },
-    {
-      label: "Master Data",
-      href: "/secure/admin/control/masterdata",
-      icon: StorageRoundedIcon,
-    },
-    {
-      label: "Users",
-      href: "/secure/admin/control/users",
-      icon: PersonRoundedIcon,
-    },
-  ];
-
   const pathname = usePathname();
 
   function isActivePath(pathname: string, href: string, label: string) {
@@ -134,7 +96,7 @@ export default function RootLayout({
           />
 
           {/* Navigation buttons */}
-          {navItems.map((item) => {
+          {ADMIN_SIDEBAR_ITEMS.map((item) => {
             const isActive = isActivePath(pathname, item.href, item.label);
             return (
               <Stack key={item.label}>

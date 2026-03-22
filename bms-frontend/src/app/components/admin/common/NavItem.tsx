@@ -1,23 +1,15 @@
 "use client";
 
-import { SvgIconComponent } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import NextLink from "next/link";
 
-type NavItem = {
-  label: string;
-  href: string;
-  icon: SvgIconComponent;
-  iconSize: number;
+import type { AdminNavItemDefinition } from "@/types/admin";
+
+type AdminNavItemProps = {
+  navItems: AdminNavItemDefinition[];
 };
 
-type ControlFacilityButtonProps = {
-  navItems: NavItem[];
-};
-
-export default function ControlFacilityButton({
-  navItems,
-}: ControlFacilityButtonProps) {
+export default function AdminNavItem({ navItems }: AdminNavItemProps) {
   return (
     <Box
       sx={{

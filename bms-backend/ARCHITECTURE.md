@@ -258,6 +258,17 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 - Interface validation
 - No `any` types where possible
 
+---
+
+## License and Usage
+
+Copyright (c) 2026 Kirk Duane S. Villacarlos
+All rights reserved.
+
+This repository is provided for portfolio and demonstration purposes only.
+No part of this code may be copied, modified, or used for commercial purposes
+without explicit written permission from the author.
+
 ✅ **RESTful API Design**
 
 - Standard HTTP methods

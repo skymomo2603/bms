@@ -2,22 +2,13 @@
 
 import BreadcrumbsNav from "@/components/admin/common/BreadcrumbsNav";
 import AdminNavItem from "@/components/admin/common/NavItem";
-import ConstructionOutlinedIcon from "@mui/icons-material/ConstructionOutlined";
+import { BOOKING_BREADCRUMBS, BOOKING_NAV_ITEMS } from "@/constants/adminNav";
 
 export default function BookingsTab() {
-  const navItems = [
-    {
-      label: "To Do",
-      href: "#",
-      icon: ConstructionOutlinedIcon,
-      iconSize: 50,
-    },
-  ];
-
   return (
     <>
-      <BreadcrumbsNav crumbs={[{ label: "Bookings", active: true }]} />
-      <AdminNavItem navItems={navItems} />
+      <BreadcrumbsNav crumbs={BOOKING_BREADCRUMBS} />
+      <AdminNavItem navItems={BOOKING_NAV_ITEMS} />
     </>
   );
 }

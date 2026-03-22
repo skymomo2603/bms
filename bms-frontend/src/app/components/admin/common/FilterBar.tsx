@@ -1,4 +1,3 @@
-import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import FilterListOutlinedIcon from "@mui/icons-material/FilterListOutlined";
 import {
   Box,
@@ -13,19 +12,16 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React from "react";
+import { useEffect, useState } from "react";
 
-interface FilterDefinition {
-  key: string;
-  label: string;
-  options?: string[];
-}
+import { filterBarStyles } from "@/components/admin/common/FilterBar.styles";
+import type { AdminFilterDefinition, AdminFilterValues } from "@/types/admin";
 
 interface FilterBarProps {
   keyword: string;
-  dropdownFilters?: FilterDefinition[];
-  checkboxFilters?: FilterDefinition[];
-  onApplyFilters: (values: Record<string, string | boolean>) => void;
+  dropdownFilters?: AdminFilterDefinition[];
+  checkboxFilters?: AdminFilterDefinition[];
+  onApplyFilters: (values: AdminFilterValues) => void;
 }
 
 export default function FilterBar({
@@ -34,18 +30,14 @@ export default function FilterBar({
   checkboxFilters,
   onApplyFilters,
 }: FilterBarProps) {
-  const [values, setValues] = React.useState<Record<string, string | boolean>>(
-    () =>
-      (dropdownFilters ?? []).reduce<Record<string, string | boolean>>(
-        (acc, filter) => {
-          acc[filter.key] = filter.options?.[0] ?? "";
-          return acc;
-        },
-        {}
-      )
+  const [values, setValues] = useState<AdminFilterValues>(() =>
+    (dropdownFilters ?? []).reduce<AdminFilterValues>((acc, filter) => {
+      acc[filter.key] = filter.options?.[0] ?? "";
+      return acc;
+    }, {})
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!dropdownFilters?.length) return;
 
     setValues((prev) => {
@@ -67,45 +59,9 @@ export default function FilterBar({
     setValues((prev) => ({ ...prev, [key]: val }));
   };
 
-  const commonShadow = "0px 0px 3px var(--box-shadow)";
-  const inputHeight = "2.4rem";
-
-  const selectSx = {
-    height: inputHeight,
-    minWidth: "120px",
-    fontSize: ".8rem",
-    color: "var(--text-blue-dark2)",
-    bgcolor: "white",
-    boxShadow: commonShadow,
-    borderRadius: 1,
-    "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-    "& .MuiSelect-icon": { color: "var(--text-light)" },
-  };
-
-  const textFieldSx = {
-    bgcolor: "white",
-    boxShadow: commonShadow,
-    borderRadius: 1,
-    height: inputHeight,
-    flexGrow: 0.25,
-    "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-    "& .MuiInputBase-root": { width: "100%" },
-    "& .MuiInputBase-input": { p: 1.3, fontSize: "0.8rem" },
-  };
-
-  const labelSx = { fontSize: ".8rem", mt: 1.1 };
-
   return (
-    <Box
-      sx={{
-        p: 3,
-        bgcolor: "var(--background-custom-blue-light-1)",
-        color: "var(--text-blue-dark2)",
-        borderRadius: "calc(0.5rem * (200 / 400))",
-      }}
-    >
+    <Box sx={filterBarStyles.container}>
       <Grid container spacing={2} alignItems="flex-start" rowGap={0}>
-        {/* Filter Section */}
         <Grid item xs={11}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
             {dropdownFilters && (
@@ -113,68 +69,38 @@ export default function FilterBar({
                 {dropdownFilters.map((f) => (
                   <FormControl
                     key={f.key}
+                    sx={filterBarStyles.selectContainer}
                     size="small"
-                    sx={{
-                      minWidth: "120px",
-                      bgcolor: "white",
-                      boxShadow: commonShadow,
-                      borderRadius: 1,
-                    }}
                   >
                     <InputLabel
                       id={`label-${f.key}`}
-                      sx={{
-                        fontSize: "0.7rem",
-                        color: "var(--text-blue-dark2)",
-                        backgroundColor: "white",
-                        letterSpacing: "0.07rem",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        lineHeight: 1.1,
-                        py: 0,
-                        px: 0.28,
-                        ml: -0.6,
-                        mt: 0.58,
-                      }}
+                      sx={filterBarStyles.inputLabel}
                     >
                       {f.label}
                     </InputLabel>
                     <Select
                       labelId={`label-${f.key}`}
-                      name={f.key}
-                      id={`select-${f.key}`}
                       value={(values[f.key] as string) || ""}
-                      onChange={(e) => handleChange(f.key, e.target.value)}
+                      onChange={(event) =>
+                        handleChange(f.key, event.target.value)
+                      }
                       label={f.label}
-                      IconComponent={ExpandMoreOutlinedIcon}
-                      sx={{
-                        height: inputHeight,
-                        fontSize: ".8rem",
-                        color: "var(--text-blue-dark2)",
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          border: "none",
-                        },
-                        "& .MuiSelect-icon": { color: "var(--text-light)" },
-                      }}
+                      sx={filterBarStyles.select}
                       MenuProps={{
                         disableScrollLock: true,
                         disablePortal: true,
                         PaperProps: {
-                          sx: {
-                            color: "var(--text-blue-dark)",
-                            boxShadow: commonShadow,
-                            borderRadius: 1,
-                          },
+                          sx: filterBarStyles.menuPaper,
                         },
                       }}
                     >
-                      {f.options?.map((opt) => (
+                      {(f.options ?? []).map((option) => (
                         <MenuItem
-                          key={opt}
-                          value={opt}
+                          key={option}
+                          value={option}
                           sx={{ fontSize: "0.88rem" }}
                         >
-                          {opt}
+                          {option}
                         </MenuItem>
                       ))}
                     </Select>
@@ -184,19 +110,7 @@ export default function FilterBar({
             )}
 
             {checkboxFilters && (
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 2,
-                  flexWrap: "wrap",
-                  height: inputHeight,
-                  width: "fit-content",
-                  bgcolor: "white",
-                  boxShadow: commonShadow,
-                  borderRadius: 1,
-                  px: 3,
-                }}
-              >
+              <Box sx={filterBarStyles.checkboxContainer}>
                 {checkboxFilters.map((f) => (
                   <FormControlLabel
                     key={f.key}
@@ -204,22 +118,11 @@ export default function FilterBar({
                       <Checkbox
                         checked={Boolean(values[f.key])}
                         onChange={(e) => handleChange(f.key, e.target.checked)}
-                        sx={{
-                          p: 0,
-                          pr: 0.8,
-                          "& .MuiSvgIcon-root": {
-                            fontSize: 20,
-                            strokeWidth: 0.2,
-                            color: "var(--border-color-custom-1)",
-                          },
-                          "&.Mui-checked .MuiSvgIcon-root": {
-                            color: "var(--button-bg-blue)",
-                          },
-                        }}
+                        sx={filterBarStyles.checkbox}
                       />
                     }
                     label={
-                      <Typography sx={{ fontSize: ".8rem" }}>
+                      <Typography sx={filterBarStyles.checkboxLabel}>
                         {f.label}
                       </Typography>
                     }
@@ -230,44 +133,22 @@ export default function FilterBar({
           </Box>
         </Grid>
 
-        {/* Keyword Section */}
         <Grid item xs={11}>
           <Box sx={{ display: "flex", gap: 1.5 }}>
             <TextField
               label="Keyword"
               InputLabelProps={{
                 shrink: true,
-                sx: {
-                  fontSize: "0.75rem",
-                  color: "var(--text-blue-dark2)",
-                  backgroundColor: "white",
-                  letterSpacing: "0.078rem",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  lineHeight: 1.1,
-                  py: 0,
-                  px: 0.28,
-                  ml: -0.6,
-                  mt: 0.58,
-                },
+                sx: filterBarStyles.keywordLabel,
               }}
               value={(values[keyword] as string) || ""}
               onChange={(e) => handleChange(keyword, e.target.value)}
-              sx={textFieldSx}
+              sx={filterBarStyles.keywordField}
             />
             <Button
-              variant="contained"
               onClick={() => onApplyFilters(values)}
-              sx={{
-                bgcolor: "var(--button-bg-blue)",
-                textTransform: "none",
-                fontSize: ".8rem",
-                boxShadow: commonShadow,
-                "&:hover": {
-                  bgcolor: "var(--button-bg-blue-hover)",
-                  boxShadow: commonShadow,
-                },
-              }}
+              sx={filterBarStyles.applyButton}
+              variant="contained"
               startIcon={<FilterListOutlinedIcon />}
             >
               Apply Filters

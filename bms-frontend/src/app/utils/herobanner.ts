@@ -1,8 +1,11 @@
 import {
   HeroBannerDto,
   HeroBannerFormData,
+  HeroBannerListFilterValues,
   HeroBannerStatus,
 } from "@/types/herobanner";
+
+import { HEROBANNER_FILTER_KEY } from "@/constants/heroBannerList";
 
 function normalizeHeroBannerStatus(value: unknown): HeroBannerStatus {
   return value === "Active" ? "Active" : "Inactive";
@@ -46,4 +49,29 @@ export function toHeroBannerFormData(
     image: banner.image,
     status: banner.status,
   };
+}
+
+export function filterHeroBanners(
+  banners: HeroBannerDto[],
+  filters: HeroBannerListFilterValues
+): HeroBannerDto[] {
+  const rawStatus = filters.status;
+  const rawKeyword = filters[HEROBANNER_FILTER_KEY];
+
+  const statusFilter =
+    typeof rawStatus === "string" && rawStatus !== "All" ? rawStatus : "";
+
+  const keywordFilter =
+    typeof rawKeyword === "string" ? rawKeyword.trim().toLowerCase() : "";
+
+  return banners.filter((banner) => {
+    const matchesStatus = statusFilter
+      ? banner.status.toLowerCase() === statusFilter.toLowerCase()
+      : true;
+    const matchesKeyword = keywordFilter
+      ? banner.title.toLowerCase().includes(keywordFilter)
+      : true;
+
+    return matchesStatus && matchesKeyword;
+  });
 }

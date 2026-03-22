@@ -7,12 +7,12 @@ import {
 } from "@mui/icons-material";
 import { Box, Button, MenuItem, Select, Typography } from "@mui/material";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type FacilityAction = () => void;
 type FacilityStatusAction = (status: string) => void;
 
-interface FacilityControlProps {
+interface FacilityControlsProps {
   labelSingular: string;
   labelPlural: string;
   onCreate?: string;
@@ -48,7 +48,7 @@ const actionButtonSx = {
   mb: 1.2,
 };
 
-export default function FacilityControl({
+export default function FacilityControls({
   labelSingular,
   labelPlural,
   onCreate,
@@ -59,8 +59,18 @@ export default function FacilityControl({
   deleteAllDisabled = true,
   selectedCount = 0,
   statusOptions = ["Active", "Inactive"],
-}: FacilityControlProps) {
+}: FacilityControlsProps) {
   const [status, setStatus] = useState(statusOptions[0] ?? "");
+
+  useEffect(() => {
+    setStatus((currentStatus) => {
+      if (statusOptions.includes(currentStatus)) {
+        return currentStatus;
+      }
+
+      return statusOptions[0] ?? "";
+    });
+  }, [statusOptions]);
 
   return (
     <Box>

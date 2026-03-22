@@ -29,6 +29,32 @@ export const getAllHeroBanners = async (
 };
 
 /**
+ * GET active hero banner
+ * @route GET /hero-banners/active
+ */
+export const getActiveHeroBanner = async (
+  _req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const banner = await prisma.heroBanner.findFirst({
+      where: { status: "Active" },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (!banner) {
+      res.status(404).json({ error: "Active hero banner not found" });
+      return;
+    }
+
+    res.json(banner);
+  } catch (error) {
+    console.error("Error fetching active hero banner:", error);
+    res.status(500).json({ error: "Failed to fetch active hero banner" });
+  }
+};
+
+/**
  * GET single hero banner by ID
  * @route GET /hero-banners/:id
  */
