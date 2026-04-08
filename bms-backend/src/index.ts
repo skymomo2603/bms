@@ -1,6 +1,7 @@
 import cors from "cors";
 import "dotenv/config";
 import express, { Application } from "express";
+import carouselRoutes from "./routes/carouselRoutes.js";
 import heroBannerRoutes from "./routes/heroBannerRoutes.js";
 import roomRoutes from "./routes/roomRoutes.js";
 
@@ -19,6 +20,7 @@ app.use(express.json({ limit: "10mb" }));
 // Routes
 app.use("/api/rooms", roomRoutes);
 app.use("/hero-banners", heroBannerRoutes);
+app.use("/carousels", carouselRoutes);
 
 // Root route
 app.get("/", (_req, res) => {

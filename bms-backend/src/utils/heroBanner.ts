@@ -1,19 +1,23 @@
 import {
   CreateHeroBannerRequest,
-  HeroBannerStatus,
+  Status,
   UpdateHeroBannerRequest,
 } from "../types/index.js";
 
-const HERO_BANNER_STATUSES: HeroBannerStatus[] = ["Active", "Inactive"];
+const HERO_BANNER_STATUSES: Status[] = ["Active", "Inactive"];
 
-export function isHeroBannerStatus(value: unknown): value is HeroBannerStatus {
-  return HERO_BANNER_STATUSES.includes(value as HeroBannerStatus);
+export function isHeroBannerStatus(value: unknown): value is Status {
+  return HERO_BANNER_STATUSES.includes(value as Status);
 }
 
 export function validateCreateHeroBanner(
   data: CreateHeroBannerRequest
 ): string[] {
   const errors: string[] = [];
+
+  if (!data.headline || !data.headline.trim()) {
+    errors.push("Headline is required");
+  }
 
   if (!data.title || !data.title.trim()) {
     errors.push("Title is required");
@@ -38,6 +42,10 @@ export function validateUpdateHeroBanner(
   data: UpdateHeroBannerRequest
 ): string[] {
   const errors: string[] = [];
+
+  if (data.headline !== undefined && !data.headline.trim()) {
+    errors.push("Headline cannot be empty");
+  }
 
   if (data.title !== undefined && !data.title.trim()) {
     errors.push("Title cannot be empty");

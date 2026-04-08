@@ -1,64 +1,64 @@
 import { Request, Response } from "express";
 import { prisma } from "../prisma.js";
 import {
-  CreateHeroBannerRequest,
-  UpdateHeroBannerRequest,
+  CreateCarouselRequest,
+  UpdateCarouselRequest,
 } from "../types/index.js";
 import {
-  validateCreateHeroBanner,
-  validateUpdateHeroBanner,
-} from "../utils/heroBanner.js";
+  validateCreateCarousel,
+  validateUpdateCarousel,
+} from "../utils/carousel.js";
 
 /**
- * GET all hero banners
- * @route GET /hero-banners
+ * GET all carousels
+ * @route GET /carousels
  */
-export const getAllHeroBanners = async (
+export const getAllCarousels = async (
   _req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const banners = await prisma.heroBanner.findMany({
+    const banners = await prisma.carousel.findMany({
       orderBy: { createdAt: "desc" },
     });
     res.json(banners);
   } catch (error) {
-    console.error("Error fetching hero banners:", error);
-    res.status(500).json({ error: "Failed to fetch hero banners" });
+    console.error("Error fetching carousels:", error);
+    res.status(500).json({ error: "Failed to fetch carousels" });
   }
 };
 
 /**
- * GET active hero banner
- * @route GET /hero-banners/active
+ * GET active carousel
+ * @route GET /carousels/active
  */
-export const getActiveHeroBanner = async (
+export const getActiveCarousel = async (
   _req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const banner = await prisma.heroBanner.findFirst({
+    const banner = await prisma.carousel.findFirst({
       where: { status: "Active" },
       orderBy: { createdAt: "desc" },
     });
 
     if (!banner) {
-      res.status(404).json({ error: "Active hero banner not found" });
+      res.status(404).json({ error: "Active carousel not found" });
       return;
     }
 
     res.json(banner);
   } catch (error) {
-    console.error("Error fetching active hero banner:", error);
-    res.status(500).json({ error: "Failed to fetch active hero banner" });
+    console.error("Error fetching active carousel:", error);
+    res.status(500).json({ error: "Failed to fetch active carousel" });
   }
 };
 
 /**
- * GET single hero banner by ID
- * @route GET /hero-banners/:id
+ * GET single carousel by ID
+ * @route GET /carousels/:id
  */
-export const getHeroBannerById = async (
+export const getCarouselById = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -71,40 +71,40 @@ export const getHeroBannerById = async (
       return;
     }
 
-    const banner = await prisma.heroBanner.findUnique({
+    const banner = await prisma.carousel.findUnique({
       where: { id: parsedId },
     });
 
     if (!banner) {
-      res.status(404).json({ error: "Hero banner not found" });
+      res.status(404).json({ error: "Carousel not found" });
       return;
     }
 
     res.json(banner);
   } catch (error) {
-    console.error("Error fetching hero banner:", error);
-    res.status(500).json({ error: "Failed to fetch hero banner" });
+    console.error("Error fetching carousel:", error);
+    res.status(500).json({ error: "Failed to fetch carousel" });
   }
 };
 
 /**
- * CREATE new hero banner
- * @route POST /hero-banners
+ * CREATE new carousel
+ * @route POST /carousels
  */
-export const createHeroBanner = async (
+export const createCarousel = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const { headline, title, remarks, image, status } =
-      req.body as CreateHeroBannerRequest;
+    const { headline, message, title, remarks, status } =
+      req.body as CreateCarouselRequest;
 
     // Validation
-    const validationErrors = validateCreateHeroBanner({
+    const validationErrors = validateCreateCarousel({
       headline,
+      message,
       title,
       remarks,
-      image,
       status,
     });
 
@@ -118,44 +118,44 @@ export const createHeroBanner = async (
     const banner =
       nextStatus === "Active"
         ? await prisma.$transaction(async (tx) => {
-            await tx.heroBanner.updateMany({
+            await tx.carousel.updateMany({
               where: {},
               data: { status: "Inactive" },
             });
 
-            return tx.heroBanner.create({
+            return tx.carousel.create({
               data: {
                 headline: headline.trim(),
+                message: message.trim(),
                 title: title.trim(),
                 remarks: remarks.trim(),
-                image: image.trim(),
                 status: nextStatus,
               },
             });
           })
-        : await prisma.heroBanner.create({
+        : await prisma.carousel.create({
             data: {
               headline: headline.trim(),
+              message: message.trim(),
               title: title.trim(),
               remarks: remarks.trim(),
-              image: image.trim(),
               status: nextStatus,
             },
           });
 
     res.status(201).json(banner);
   } catch (error: any) {
-    console.error("Error creating hero banner:", error);
+    console.error("Error creating carousel:", error);
 
-    res.status(500).json({ error: "Failed to create hero banner" });
+    res.status(500).json({ error: "Failed to create carousel" });
   }
 };
 
 /**
- * UPDATE hero banner
- * @route PUT /hero-banners/:id
+ * UPDATE carousel
+ * @route PUT /carousels/:id
  */
-export const updateHeroBanner = async (
+export const updateCarousel = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -168,10 +168,10 @@ export const updateHeroBanner = async (
       return;
     }
 
-    const data = req.body as UpdateHeroBannerRequest;
+    const data = req.body as UpdateCarouselRequest;
 
     // Validate update payload
-    const validationErrors = validateUpdateHeroBanner(data);
+    const validationErrors = validateUpdateCarousel(data);
     if (validationErrors.length > 0) {
       res.status(400).json({ error: validationErrors.join(", ") });
       return;
@@ -180,50 +180,50 @@ export const updateHeroBanner = async (
     // Trim strings if provided
     const updateData = {
       ...(data.headline && { headline: data.headline.trim() }),
+      ...(data.message && { message: data.message.trim() }),
       ...(data.title && { title: data.title.trim() }),
       ...(data.remarks && { remarks: data.remarks.trim() }),
-      ...(data.image && { image: data.image.trim() }),
       ...(data.status && { status: data.status }),
     };
 
     const banner =
       data.status === "Active"
         ? await prisma.$transaction(async (tx) => {
-            await tx.heroBanner.updateMany({
+            await tx.carousel.updateMany({
               where: {
                 id: { not: parsedId },
               },
               data: { status: "Inactive" },
             });
 
-            return tx.heroBanner.update({
+            return tx.carousel.update({
               where: { id: parsedId },
               data: updateData,
             });
           })
-        : await prisma.heroBanner.update({
+        : await prisma.carousel.update({
             where: { id: parsedId },
             data: updateData,
           });
 
     res.json(banner);
   } catch (error: any) {
-    console.error("Error updating hero banner:", error);
+    console.error("Error updating carousel:", error);
 
     if (error.code === "P2025") {
-      res.status(404).json({ error: "Hero banner not found" });
+      res.status(404).json({ error: "Carousel not found" });
       return;
     }
 
-    res.status(500).json({ error: "Failed to update hero banner" });
+    res.status(500).json({ error: "Failed to update carousel" });
   }
 };
 
 /**
- * DELETE hero banner
- * @route DELETE /hero-banners/:id
+ * DELETE carousel
+ * @route DELETE /carousels/:id
  */
-export const deleteHeroBanner = async (
+export const deleteCarousel = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -236,28 +236,28 @@ export const deleteHeroBanner = async (
       return;
     }
 
-    await prisma.heroBanner.delete({
+    await prisma.carousel.delete({
       where: { id: parsedId },
     });
 
-    res.json({ message: "Hero banner deleted successfully" });
+    res.json({ message: "Carousel deleted successfully" });
   } catch (error: any) {
-    console.error("Error deleting hero banner:", error);
+    console.error("Error deleting carousel:", error);
 
     if (error.code === "P2025") {
-      res.status(404).json({ error: "Hero banner not found" });
+      res.status(404).json({ error: "Carousel not found" });
       return;
     }
 
-    res.status(500).json({ error: "Failed to delete hero banner" });
+    res.status(500).json({ error: "Failed to delete carousel" });
   }
 };
 
 /**
- * BULK DELETE hero banners
- * @route DELETE /hero-banners/bulk
+ * BULK DELETE carousels
+ * @route DELETE /carousels/bulk
  */
-export const deleteHeroBannersBulk = async (
+export const deleteCarouselsBulk = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -276,14 +276,14 @@ export const deleteHeroBannersBulk = async (
       return;
     }
 
-    const { count } = await prisma.heroBanner.deleteMany({
+    const { count } = await prisma.carousel.deleteMany({
       where: { id: { in: parsedIds } },
     });
 
-    res.json({ message: `${count} hero banner(s) deleted successfully` });
+    res.json({ message: `${count} carousel(s) deleted successfully` });
   } catch (error) {
-    console.error("Error bulk deleting hero banners:", error);
-    res.status(500).json({ error: "Failed to delete hero banners" });
+    console.error("Error bulk deleting carousels:", error);
+    res.status(500).json({ error: "Failed to delete carousels" });
   }
 };
 

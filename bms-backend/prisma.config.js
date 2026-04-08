@@ -9,6 +9,6 @@ module.exports = defineConfig({
   datasource: {
     provider: "postgresql",
     url: env("DATABASE_URL"),
-    schemas: ["booking"],
+    schemas: ["booking", "content"],
   },
 });

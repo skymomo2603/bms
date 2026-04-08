@@ -5,7 +5,7 @@ import {
   HeroBannerStatus,
 } from "@/types/herobanner";
 
-import { HEROBANNER_FILTER_KEY } from "@/constants/heroBannerList";
+import { HEROBANNER_FILTER_KEY } from "@/constants/herobanner";
 
 function normalizeHeroBannerStatus(value: unknown): HeroBannerStatus {
   return value === "Active" ? "Active" : "Inactive";
@@ -14,6 +14,9 @@ function normalizeHeroBannerStatus(value: unknown): HeroBannerStatus {
 export function validateHeroBannerForm(formData: HeroBannerFormData): string[] {
   const errors: string[] = [];
 
+  if (!formData.headline.trim()) {
+    errors.push("Headline is required");
+  }
   if (!formData.title.trim()) {
     errors.push("Title is required");
   }
@@ -29,6 +32,7 @@ export function toHeroBannerDto(value: unknown): HeroBannerDto {
 
   return {
     id: Number(banner?.id ?? 0),
+    headline: String(banner?.headline ?? ""),
     title: String(banner?.title ?? ""),
     remarks: String(banner?.remarks ?? ""),
     image: String(banner?.image ?? ""),
@@ -44,6 +48,7 @@ export function toHeroBannerFormData(
   banner: HeroBannerDto
 ): HeroBannerFormData {
   return {
+    headline: banner.headline,
     title: banner.title,
     remarks: banner.remarks,
     image: banner.image,

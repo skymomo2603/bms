@@ -39,9 +39,11 @@ export default async function HomePage() {
 
       <section className={styles.welcomeSection}>
         <div className={styles.welcomeInner}>
-          <p className={styles.welcomeEyebrow}>Welcome to our page!</p>
+          <p className={styles.welcomeEyebrow}>
+            {heroBanner ? heroBanner.headline : "Welcome to our page!"}
+          </p>
           <h2 className={styles.welcomeTitle}>
-            A calm arrival, designed around your stay.
+            A calm arrival, designed around your stay
           </h2>
           <p className={styles.welcomeCopy}>
             At KsVill Hotel, we believe your journey deserves more than just a
