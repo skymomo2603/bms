@@ -1,13 +1,13 @@
 import { getApiBaseUrl } from "@/lib/api/baseUrl";
-import { HeroBannerDto, HeroBannerStatus } from "@/types/herobanner";
-import { toHeroBannerDto, toHeroBannerDtos } from "@/utils/herobanner";
+import { CarouselDto, CarouselStatus } from "@/types/carousel";
+import { toCarouselDto, toCarouselDtos } from "@/utils/carousel";
 
-export interface HeroBannerPayload {
+export interface CarouselPayload {
   headline: string;
+  message: string;
   title: string;
   remarks: string;
-  image: string;
-  status: HeroBannerStatus;
+  status: CarouselStatus;
 }
 
 async function parseErrorResponse(response: Response): Promise<string> {
@@ -25,10 +25,10 @@ async function parseErrorResponse(response: Response): Promise<string> {
   }
 }
 
-export async function createHeroBanner(
-  data: HeroBannerPayload
-): Promise<HeroBannerDto> {
-  const response = await fetch(`${getApiBaseUrl()}/hero-banners`, {
+export async function createCarousel(
+  data: CarouselPayload
+): Promise<CarouselDto> {
+  const response = await fetch(`${getApiBaseUrl()}/carousels`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -41,21 +41,21 @@ export async function createHeroBanner(
     throw new Error(errorMessage);
   }
 
-  return toHeroBannerDto(await response.json());
+  return toCarouselDto(await response.json());
 }
 
-export async function getHeroBanners(): Promise<HeroBannerDto[]> {
-  const response = await fetch(`${getApiBaseUrl()}/hero-banners`);
+export async function getCarousels(): Promise<CarouselDto[]> {
+  const response = await fetch(`${getApiBaseUrl()}/carousels`);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch hero banners");
+    throw new Error("Failed to fetch carousels");
   }
 
-  return toHeroBannerDtos(await response.json());
+  return toCarouselDtos(await response.json());
 }
 
-export async function getActiveHeroBanner(): Promise<HeroBannerDto | null> {
-  const response = await fetch(`${getApiBaseUrl()}/hero-banners/active`, {
+export async function getActiveCarousel(): Promise<CarouselDto | null> {
+  const response = await fetch(`${getApiBaseUrl()}/carousels/active`, {
     cache: "no-store",
   });
 
@@ -64,27 +64,27 @@ export async function getActiveHeroBanner(): Promise<HeroBannerDto | null> {
   }
 
   if (!response.ok) {
-    throw new Error("Failed to fetch active hero banner");
+    throw new Error("Failed to fetch active carousel");
   }
 
-  return toHeroBannerDto(await response.json());
+  return toCarouselDto(await response.json());
 }
 
-export async function getHeroBanner(id: number): Promise<HeroBannerDto> {
-  const response = await fetch(`${getApiBaseUrl()}/hero-banners/${id}`);
+export async function getCarousel(id: number): Promise<CarouselDto> {
+  const response = await fetch(`${getApiBaseUrl()}/carousels/${id}`);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch hero banner");
+    throw new Error("Failed to fetch carousel");
   }
 
-  return toHeroBannerDto(await response.json());
+  return toCarouselDto(await response.json());
 }
 
-export async function updateHeroBanner(
+export async function updateCarousel(
   id: number,
-  data: Partial<HeroBannerPayload>
-): Promise<HeroBannerDto> {
-  const response = await fetch(`${getApiBaseUrl()}/hero-banners/${id}`, {
+  data: Partial<CarouselPayload>
+): Promise<CarouselDto> {
+  const response = await fetch(`${getApiBaseUrl()}/carousels/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -97,11 +97,11 @@ export async function updateHeroBanner(
     throw new Error(errorMessage);
   }
 
-  return toHeroBannerDto(await response.json());
+  return toCarouselDto(await response.json());
 }
 
-export async function deleteHeroBanners(ids: number[]) {
-  const response = await fetch(`${getApiBaseUrl()}/hero-banners/bulk`, {
+export async function deleteCarousels(ids: number[]) {
+  const response = await fetch(`${getApiBaseUrl()}/carousels/bulk`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ids }),
@@ -115,8 +115,8 @@ export async function deleteHeroBanners(ids: number[]) {
   return response.json();
 }
 
-export async function deleteHeroBanner(id: number) {
-  const response = await fetch(`${getApiBaseUrl()}/hero-banners/${id}`, {
+export async function deleteCarousel(id: number) {
+  const response = await fetch(`${getApiBaseUrl()}/carousels/${id}`, {
     method: "DELETE",
   });
 

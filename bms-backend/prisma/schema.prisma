@@ -7,7 +7,7 @@ datasource db {
   schemas  = ["booking", "content"]
 }
 
-enum HeroBannerStatus {
+enum Status {
   Active
   Inactive
 
@@ -16,14 +16,45 @@ enum HeroBannerStatus {
 
 model HeroBanner {
   id        Int      @id @default(autoincrement())
+  headline  String
   title     String
   remarks   String
   image     String   @db.Text
-  status    HeroBannerStatus @default(Active)
+  status    Status @default(Active)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("herobanner")
+  @@schema("content")
+}
+
+model Carousel {
+  id        Int      @id @default(autoincrement())
+  headline  String
+  message   String
+  title     String
+  remarks   String
+  status    Status   @default(Active)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  carouselImage    CarouselImage[]
+  @@map("carousel")
+  @@schema("content")
+}
+
+model CarouselImage {
+  id          Int      @id @default(autoincrement())
+  carouselId  Int
+  image       String
+  caption     String?
+  order       Int
+  status      Status   @default(Active)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  carousel    Carousel @relation(fields: [carouselId], references: [id])
+  @@map("carouselimage")
   @@schema("content")
 }
 

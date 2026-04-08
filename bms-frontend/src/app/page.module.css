@@ -88,7 +88,7 @@
 }
 
 .welcomeSection {
-  padding: clamp(54px, 7vw, 84px) 24px clamp(64px, 7vw, 92px);
+  padding: 4.2rem 0;
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.82) 0%,
@@ -97,23 +97,24 @@
 }
 
 .welcomeInner {
-  width: min(1120px, 100%);
+  width: 95%;
   margin: 0 auto;
   text-align: center;
 }
 
 .welcomeEyebrow {
-  margin-bottom: 12px;
-  color: #0f518a;
-  font-size: clamp(1.2rem, 2.6vw, 1.85rem);
+  margin-top: 1rem;
+  margin-bottom: 3.4rem;
+  color: #10263d;
+  font-size: 2rem;
   font-style: italic;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
 }
 
 .welcomeTitle {
-  margin-bottom: 16px;
+  margin-bottom: 0.8rem;
   color: #10263d;
-  font-size: clamp(1.7rem, 3.6vw, 2.8rem);
+  font-size: 1.42rem;
   font-weight: 500;
   line-height: 1.12;
   letter-spacing: 0.01em;
@@ -121,10 +122,10 @@
 }
 
 .welcomeCopy {
-  width: min(1220px, 100%);
+  width: 85%;
   margin: 0 auto;
   color: #24384f;
-  font-size: clamp(0.98rem, 1.7vw, 1.25rem);
+  font-size: 0.94rem;
   line-height: 1.65;
   font-style: italic;
   letter-spacing: 0.04em;

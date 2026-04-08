@@ -10,8 +10,6 @@ import HeroBannerStatusDialog from "@/components/admin/content/herobanner/HeroBa
 import {
   HEROBANNER_DROPDOWN_FILTERS,
   HEROBANNER_FILTER_KEY,
-} from "@/constants/heroBannerList";
-import {
   HEROBANNER_LIST_BREADCRUMBS,
   HEROBANNER_ROUTES,
 } from "@/constants/herobanner";
@@ -103,7 +101,7 @@ export default function HeroBannerPage() {
 
               {filteredBanners.length === 0 && (
                 <Typography sx={{ mt: 2, color: "var(--text-grey-dark)" }}>
-                  No banners found for the applied filters.
+                  No banners found...
                 </Typography>
               )}
             </Box>

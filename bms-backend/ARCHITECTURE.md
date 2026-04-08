@@ -158,7 +158,6 @@ Content-Type: application/json
   - `201` - Created (POST success)
   - `400` - Bad Request (validation error)
   - `404` - Not Found
-  - `409` - Conflict (duplicate title)
   - `500` - Server Error
 
 ### 2. **Input Validation**

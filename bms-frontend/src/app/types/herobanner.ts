@@ -4,6 +4,7 @@ export type HeroBannerStatus = "Active" | "Inactive";
 
 export interface HeroBannerDto {
   id: number;
+  headline: string;
   title: string;
   remarks: string;
   image: string;
@@ -11,6 +12,7 @@ export interface HeroBannerDto {
 }
 
 export interface HeroBannerFormData {
+  headline: string;
   title: string;
   remarks: string;
   image: string | null;

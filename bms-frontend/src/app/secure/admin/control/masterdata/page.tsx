@@ -7,7 +7,7 @@ import {
   MASTER_DATA_NAV_ITEMS,
 } from "@/constants/adminNav";
 
-export default function MasterDataTab() {
+export default function MasterDataPage() {
   return (
     <>
       <BreadcrumbsNav crumbs={MASTER_DATA_BREADCRUMBS} />

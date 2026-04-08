@@ -19,7 +19,6 @@ import { useEffect, useRef, useState } from "react";
 import FormSection from "@/components/admin/common/FormSection";
 import { FORM_DEFAULTS, STATUS_OPTIONS } from "@/constants/herobanner";
 import { HeroBannerFormData, HeroBannerFormProps } from "@/types/herobanner";
-import ImageCropDialog from "./ImageCropDialog";
 import {
   actionButtonSx,
   buttonContainerSx,
@@ -31,6 +30,7 @@ import {
   textFieldSx,
   uploadButtonSx,
 } from "./HeroBannerForm.styles";
+import ImageCropDialog from "./ImageCropDialog";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -47,6 +47,7 @@ const VisuallyHiddenInput = styled("input")({
 const getInitialFormData = (
   initialData?: Partial<HeroBannerFormData>
 ): HeroBannerFormData => ({
+  headline: initialData?.headline ?? FORM_DEFAULTS.headline,
   title: initialData?.title ?? FORM_DEFAULTS.title,
   remarks: initialData?.remarks ?? FORM_DEFAULTS.remarks,
   status: initialData?.status ?? FORM_DEFAULTS.status,
@@ -170,6 +171,17 @@ export default function HeroBannerForm({
             )}
           </Box>
         </Box>
+      </FormSection>
+
+      {/* Headline Section */}
+      <FormSection label="Headline" mt={1.5}>
+        <TextField
+          value={formData.headline}
+          onChange={(e) => handleInputChange("headline", e.target.value)}
+          placeholder="Enter hero banner headline"
+          disabled={isLoading}
+          sx={textFieldSx}
+        />
       </FormSection>
 
       {/* Title Section */}

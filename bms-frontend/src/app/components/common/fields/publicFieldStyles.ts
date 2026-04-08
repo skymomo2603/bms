@@ -9,13 +9,13 @@ export const publicFieldContainerSx = {
 
 export const publicFieldLabelSx = {
   position: "absolute",
-  top: "-0.45rem",
+  top: "-0.43rem",
   left: "0.72rem",
   zIndex: 2,
   px: "0.28rem",
   bgcolor: "white",
   color: "#606060",
-  fontSize: "0.74rem",
+  fontSize: "0.73rem",
   letterSpacing: "0.078rem",
   lineHeight: 1.1,
   display: "inline-flex",
@@ -28,7 +28,7 @@ export const publicFieldShellSx = {
   width: "100%",
   height: publicFieldHeight,
   border: "1px solid #c9c9c9",
-  borderRadius: "0.6rem",
+  borderRadius: "0.7rem",
   bgcolor: "rgba(255,255,255,0.98)",
   overflow: "hidden",
 } satisfies SxProps<Theme>;
@@ -70,7 +70,7 @@ export const publicSelectShellSx = {
 
 export const publicSelectSx = {
   height: publicFieldHeight,
-  borderRadius: "0.6rem",
+  borderRadius: "0.7rem",
   color: "#161d24",
   fontSize: "0.8rem",
   "& .MuiOutlinedInput-notchedOutline": {
@@ -99,14 +99,14 @@ export const publicSelectSx = {
 
 export const publicMenuPaperSx = {
   mt: 0.5,
-  borderRadius: "0.6rem",
+  borderRadius: "0.7rem",
   border: "1px solid rgba(4, 53, 93, 0.08)",
   boxShadow: "0 18px 42px rgba(4, 53, 93, 0.16)",
 } satisfies SxProps<Theme>;
 
 export const publicActionButtonSx = {
   height: publicFieldHeight,
-  borderRadius: "0.6rem",
+  borderRadius: "0.7rem",
   bgcolor: "#1b73b8",
   color: "white",
   px: 2.2,

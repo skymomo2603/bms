@@ -4,11 +4,11 @@ import { Box } from "@mui/material";
 
 import BreadcrumbsNav from "@/components/admin/common/BreadcrumbsNav";
 import AdminNotificationStack from "@/components/admin/common/NotificationStack";
-import HeroBannerForm from "@/components/admin/content/herobanner/HeroBannerForm";
-import { HEROBANNER_ENTRY_BREADCRUMBS } from "@/constants/herobanner";
-import { useHeroBannerEntryForm } from "@/hooks/useHeroBannerEntryForm";
+import CarouselForm from "@/components/admin/content/carousel/CarouselForm";
+import { CAROUSEL_ENTRY_BREADCRUMBS } from "@/constants/carousel";
+import { useCarouselEntryForm } from "@/hooks/useCarouselEntryForm";
 
-export default function HeroBannerEntryPage() {
+export default function CarouselEntryPage() {
   const {
     initialData,
     isLoading,
@@ -16,13 +16,13 @@ export default function HeroBannerEntryPage() {
     closeNotification,
     handleNew,
     handleSubmit,
-  } = useHeroBannerEntryForm();
+  } = useCarouselEntryForm();
 
   return (
     <>
-      <BreadcrumbsNav crumbs={HEROBANNER_ENTRY_BREADCRUMBS} />
+      <BreadcrumbsNav crumbs={CAROUSEL_ENTRY_BREADCRUMBS} />
       <Box sx={{ px: 6, py: 2.5 }}>
-        <HeroBannerForm
+        <CarouselForm
           initialData={initialData}
           onSubmit={handleSubmit}
           onNew={handleNew}
