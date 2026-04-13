@@ -1,8 +1,10 @@
 import {
+  CarouselImageRequest,
   CreateCarouselRequest,
   Status,
   UpdateCarouselRequest,
 } from "../types/index.js";
+import { assertNoInlineImageData } from "./mediaStorage.js";
 
 const CAROUSEL_STATUSES: Status[] = ["Active", "Inactive"];
 
@@ -33,6 +35,8 @@ export function validateCreateCarousel(data: CreateCarouselRequest): string[] {
     errors.push("Status must be 'Active' or 'Inactive'");
   }
 
+  errors.push(...validateCarouselImages(data.images, true));
+
   return errors;
 }
 
@@ -58,6 +62,60 @@ export function validateUpdateCarousel(data: UpdateCarouselRequest): string[] {
   if (data.status !== undefined && !isCarouselStatus(data.status)) {
     errors.push("Status must be 'Active' or 'Inactive'");
   }
+
+  if (data.images !== undefined) {
+    errors.push(...validateCarouselImages(data.images, true));
+  }
+
+  return errors;
+}
+
+function validateCarouselImages(
+  images: CarouselImageRequest[] | undefined,
+  required: boolean
+): string[] {
+  const errors: string[] = [];
+
+  if (!images || images.length === 0) {
+    if (required) {
+      errors.push("At least one carousel image is required");
+    }
+    return errors;
+  }
+
+  const seenOrders = new Set<number>();
+
+  images.forEach((image, index) => {
+    const rowLabel = `Image row ${index + 1}`;
+
+    if (!image.image || !image.image.trim()) {
+      errors.push(`${rowLabel}: image is required`);
+    } else {
+      const imageError = assertNoInlineImageData(
+        image.image,
+        `${rowLabel}: image`
+      );
+      if (imageError) {
+        errors.push(imageError);
+      }
+    }
+
+    if (image.caption !== undefined && typeof image.caption !== "string") {
+      errors.push(`${rowLabel}: caption must be a string`);
+    }
+
+    if (!Number.isInteger(image.order) || image.order < 1) {
+      errors.push(`${rowLabel}: order must be a positive integer`);
+    } else if (seenOrders.has(image.order)) {
+      errors.push(`${rowLabel}: order values must be unique`);
+    } else {
+      seenOrders.add(image.order);
+    }
+
+    if (!isCarouselStatus(image.status)) {
+      errors.push(`${rowLabel}: status must be 'Active' or 'Inactive'`);
+    }
+  });
 
   return errors;
 }

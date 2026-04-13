@@ -1,9 +1,9 @@
-import ThemeRegistry from "@/ThemeRegistry";
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
-import "@/globals.css";
 import { Box } from "@mui/material";
 import { Inter } from "next/font/google";
+import "./globals.css";
+import ThemeRegistry from "./ThemeRegistry";
 
 const inter = Inter({ subsets: ["latin"] });
 

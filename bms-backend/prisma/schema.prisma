@@ -53,7 +53,9 @@ model CarouselImage {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  carousel    Carousel @relation(fields: [carouselId], references: [id])
+  carousel    Carousel @relation(fields: [carouselId], references: [id], onDelete: Cascade)
+
+  @@index([carouselId])
   @@map("carouselimage")
   @@schema("content")
 }

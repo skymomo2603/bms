@@ -2,6 +2,39 @@ import type { AdminFilterValues } from "@/types/admin";
 
 export type CarouselStatus = "Active" | "Inactive";
 
+export interface CarouselImageDto {
+  id: number;
+  image: string;
+  caption: string;
+  order: number;
+  status: CarouselStatus;
+}
+
+export interface CarouselImageFormData {
+  id?: number;
+  image: string;
+  caption: string;
+  order: number;
+  status: CarouselStatus;
+}
+
+export interface CarouselImagePayload {
+  id?: number;
+  image: string;
+  caption: string;
+  order: number;
+  status: CarouselStatus;
+}
+
+export interface CarouselPayload {
+  headline: string;
+  message: string;
+  title: string;
+  remarks: string;
+  status: CarouselStatus;
+  images: CarouselImagePayload[];
+}
+
 export interface CarouselDto {
   id: number;
   headline: string;
@@ -9,6 +42,7 @@ export interface CarouselDto {
   title: string;
   remarks: string;
   status: CarouselStatus;
+  images: CarouselImageDto[];
 }
 
 export interface CarouselFormData {
@@ -17,6 +51,7 @@ export interface CarouselFormData {
   title: string;
   remarks: string;
   status: CarouselStatus;
+  images: CarouselImageFormData[];
 }
 
 export interface CarouselFormProps {

@@ -8,20 +8,45 @@ import {
   validateCreateHeroBanner,
   validateUpdateHeroBanner,
 } from "../utils/heroBanner.js";
+import {
+  deleteStoredImage,
+  isManagedStorageKey,
+  normalizeStoredImageReference,
+  toPublicImageUrl,
+} from "../utils/mediaStorage.js";
+
+function toHeroBannerResponse(
+  req: Request,
+  banner: {
+    id: number;
+    headline: string;
+    title: string;
+    remarks: string;
+    image: string;
+    status: "Active" | "Inactive";
+    createdAt: Date;
+    updatedAt: Date;
+  }
+) {
+  return {
+    ...banner,
+    image: toPublicImageUrl(req, banner.image),
+  };
+}
 
 /**
  * GET all hero banners
  * @route GET /hero-banners
  */
 export const getAllHeroBanners = async (
-  _req: Request,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
     const banners = await prisma.heroBanner.findMany({
       orderBy: { createdAt: "desc" },
     });
-    res.json(banners);
+    res.json(banners.map((banner) => toHeroBannerResponse(req, banner)));
   } catch (error) {
     console.error("Error fetching hero banners:", error);
     res.status(500).json({ error: "Failed to fetch hero banners" });
@@ -33,7 +58,7 @@ export const getAllHeroBanners = async (
  * @route GET /hero-banners/active
  */
 export const getActiveHeroBanner = async (
-  _req: Request,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
@@ -47,7 +72,7 @@ export const getActiveHeroBanner = async (
       return;
     }
 
-    res.json(banner);
+    res.json(toHeroBannerResponse(req, banner));
   } catch (error) {
     console.error("Error fetching active hero banner:", error);
     res.status(500).json({ error: "Failed to fetch active hero banner" });
@@ -80,7 +105,7 @@ export const getHeroBannerById = async (
       return;
     }
 
-    res.json(banner);
+    res.json(toHeroBannerResponse(req, banner));
   } catch (error) {
     console.error("Error fetching hero banner:", error);
     res.status(500).json({ error: "Failed to fetch hero banner" });
@@ -98,13 +123,14 @@ export const createHeroBanner = async (
   try {
     const { headline, title, remarks, image, status } =
       req.body as CreateHeroBannerRequest;
+    const normalizedImage = normalizeStoredImageReference(image);
 
     // Validation
     const validationErrors = validateCreateHeroBanner({
       headline,
       title,
       remarks,
-      image,
+      image: normalizedImage,
       status,
     });
 
@@ -128,7 +154,7 @@ export const createHeroBanner = async (
                 headline: headline.trim(),
                 title: title.trim(),
                 remarks: remarks.trim(),
-                image: image.trim(),
+                image: normalizedImage,
                 status: nextStatus,
               },
             });
@@ -138,12 +164,12 @@ export const createHeroBanner = async (
               headline: headline.trim(),
               title: title.trim(),
               remarks: remarks.trim(),
-              image: image.trim(),
+              image: normalizedImage,
               status: nextStatus,
             },
           });
 
-    res.status(201).json(banner);
+    res.status(201).json(toHeroBannerResponse(req, banner));
   } catch (error: any) {
     console.error("Error creating hero banner:", error);
 
@@ -169,9 +195,25 @@ export const updateHeroBanner = async (
     }
 
     const data = req.body as UpdateHeroBannerRequest;
+    const existingBanner = await prisma.heroBanner.findUnique({
+      where: { id: parsedId },
+    });
+
+    if (!existingBanner) {
+      res.status(404).json({ error: "Hero banner not found" });
+      return;
+    }
+
+    const normalizedImage =
+      data.image !== undefined
+        ? normalizeStoredImageReference(data.image)
+        : undefined;
 
     // Validate update payload
-    const validationErrors = validateUpdateHeroBanner(data);
+    const validationErrors = validateUpdateHeroBanner({
+      ...data,
+      ...(normalizedImage !== undefined ? { image: normalizedImage } : {}),
+    });
     if (validationErrors.length > 0) {
       res.status(400).json({ error: validationErrors.join(", ") });
       return;
@@ -182,7 +224,7 @@ export const updateHeroBanner = async (
       ...(data.headline && { headline: data.headline.trim() }),
       ...(data.title && { title: data.title.trim() }),
       ...(data.remarks && { remarks: data.remarks.trim() }),
-      ...(data.image && { image: data.image.trim() }),
+      ...(normalizedImage && { image: normalizedImage }),
       ...(data.status && { status: data.status }),
     };
 
@@ -206,7 +248,15 @@ export const updateHeroBanner = async (
             data: updateData,
           });
 
-    res.json(banner);
+    if (
+      normalizedImage !== undefined &&
+      normalizeStoredImageReference(existingBanner.image) !== normalizedImage &&
+      isManagedStorageKey(existingBanner.image)
+    ) {
+      await deleteStoredImage(existingBanner.image);
+    }
+
+    res.json(toHeroBannerResponse(req, banner));
   } catch (error: any) {
     console.error("Error updating hero banner:", error);
 
@@ -236,9 +286,20 @@ export const deleteHeroBanner = async (
       return;
     }
 
+    const existingBanner = await prisma.heroBanner.findUnique({
+      where: { id: parsedId },
+    });
+
+    if (!existingBanner) {
+      res.status(404).json({ error: "Hero banner not found" });
+      return;
+    }
+
     await prisma.heroBanner.delete({
       where: { id: parsedId },
     });
+
+    await deleteStoredImage(existingBanner.image);
 
     res.json({ message: "Hero banner deleted successfully" });
   } catch (error: any) {
@@ -276,9 +337,16 @@ export const deleteHeroBannersBulk = async (
       return;
     }
 
+    const banners = await prisma.heroBanner.findMany({
+      where: { id: { in: parsedIds } },
+      select: { image: true },
+    });
+
     const { count } = await prisma.heroBanner.deleteMany({
       where: { id: { in: parsedIds } },
     });
+
+    await Promise.all(banners.map((banner) => deleteStoredImage(banner.image)));
 
     res.json({ message: `${count} hero banner(s) deleted successfully` });
   } catch (error) {

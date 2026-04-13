@@ -26,6 +26,7 @@ export const FORM_DEFAULTS = {
   title: "",
   remarks: "",
   status: "Active" as const,
+  images: [],
 };
 
 export const CAROUSEL_FILTER_KEY = "keyword";

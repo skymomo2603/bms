@@ -3,7 +3,12 @@ import "dotenv/config";
 import express, { Application } from "express";
 import carouselRoutes from "./routes/carouselRoutes.js";
 import heroBannerRoutes from "./routes/heroBannerRoutes.js";
+import mediaRoutes from "./routes/mediaRoutes.js";
 import roomRoutes from "./routes/roomRoutes.js";
+import {
+  MEDIA_PUBLIC_BASE_PATH,
+  MEDIA_STORAGE_ROOT,
+} from "./utils/mediaStorage.js";
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +24,8 @@ app.use(express.json({ limit: "10mb" }));
 
 // Routes
 app.use("/api/rooms", roomRoutes);
+app.use("/media", mediaRoutes);
+app.use(MEDIA_PUBLIC_BASE_PATH, express.static(MEDIA_STORAGE_ROOT));
 app.use("/hero-banners", heroBannerRoutes);
 app.use("/carousels", carouselRoutes);
 
