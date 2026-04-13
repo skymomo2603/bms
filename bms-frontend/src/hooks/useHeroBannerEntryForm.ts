@@ -3,29 +3,33 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
-import { CAROUSEL_ROUTES } from "@/constants/carousel";
+import { HEROBANNER_ROUTES } from "@/constants/herobanner";
 import { useAdminNotifications } from "@/hooks/useAdminNotifications";
 import {
-  createCarousel,
-  getCarousel,
-  updateCarousel,
-} from "@/lib/api/carousel";
-import type { CarouselFormData } from "@/types/carousel";
-import { toCarouselFormData, validateCarouselForm } from "@/utils/carousel";
+  createHeroBanner,
+  getHeroBanner,
+  updateHeroBanner,
+} from "@/lib/api/heroBanner";
+import { uploadImageAsset } from "@/lib/api/media";
+import type { HeroBannerFormData } from "@/types/herobanner";
+import {
+  toHeroBannerFormData,
+  validateHeroBannerForm,
+} from "@/utils/herobanner";
 
-export function useCarouselEntryForm() {
+export function useHeroBannerEntryForm() {
   const [initialData, setInitialData] =
-    useState<Partial<CarouselFormData> | null>(null);
-  const [isFetchingCarousel, setIsFetchingCarousel] = useState(false);
+    useState<Partial<HeroBannerFormData> | null>(null);
+  const [isFetchingBanner, setIsFetchingBanner] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { notifications, showNotification, closeNotification } =
     useAdminNotifications();
 
-  const carouselIdParam = searchParams.get("id");
-  const carouselId = carouselIdParam ? Number(carouselIdParam) : NaN;
-  const isEditMode = Number.isInteger(carouselId) && carouselId > 0;
+  const bannerIdParam = searchParams.get("id");
+  const bannerId = bannerIdParam ? Number(bannerIdParam) : NaN;
+  const isEditMode = Number.isInteger(bannerId) && bannerId > 0;
 
   useEffect(() => {
     if (!isEditMode) {
@@ -33,58 +37,63 @@ export function useCarouselEntryForm() {
       return;
     }
 
-    const loadCarousel = async () => {
-      setIsFetchingCarousel(true);
+    const loadBanner = async () => {
+      setIsFetchingBanner(true);
 
       try {
-        const carousel = await getCarousel(carouselId);
-        setInitialData(toCarouselFormData(carousel));
+        const banner = await getHeroBanner(bannerId);
+        setInitialData(toHeroBannerFormData(banner));
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : "Failed to load carousel.";
+          err instanceof Error ? err.message : "Failed to load hero banner.";
         showNotification(errorMessage);
       } finally {
-        setIsFetchingCarousel(false);
+        setIsFetchingBanner(false);
       }
     };
 
-    void loadCarousel();
-  }, [carouselId, isEditMode, showNotification]);
+    void loadBanner();
+  }, [bannerId, isEditMode, showNotification]);
 
   const handleNew = useCallback(() => {
-    router.push(CAROUSEL_ROUTES.entry);
+    router.push(HEROBANNER_ROUTES.entry);
   }, [router]);
 
   const handleSubmit = useCallback(
-    async (formData: CarouselFormData) => {
+    async (formData: HeroBannerFormData) => {
       setIsSubmitting(true);
 
       try {
-        const validationErrors = validateCarouselForm(formData);
+        const validationErrors = validateHeroBannerForm(formData);
         if (validationErrors.length > 0) {
           validationErrors.forEach((error) => showNotification(error));
           return;
         }
 
+        const uploadedImage = await uploadImageAsset(
+          formData.image as string,
+          "hero-banners"
+        );
+
         if (isEditMode) {
-          await updateCarousel(carouselId, {
+          await updateHeroBanner(bannerId, {
             headline: formData.headline,
-            message: formData.message,
             title: formData.title,
             remarks: formData.remarks,
+            image: uploadedImage.storageKey,
             status: formData.status,
           });
         } else {
-          await createCarousel({
+          await createHeroBanner({
             headline: formData.headline,
-            message: formData.message,
             title: formData.title,
             remarks: formData.remarks,
+            image: uploadedImage.storageKey,
             status: formData.status,
           });
         }
 
-        router.push(CAROUSEL_ROUTES.list);
+        router.push(HEROBANNER_ROUTES.list);
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "An error occurred.";
@@ -93,12 +102,12 @@ export function useCarouselEntryForm() {
         setIsSubmitting(false);
       }
     },
-    [carouselId, isEditMode, router, showNotification]
+    [bannerId, isEditMode, router, showNotification]
   );
 
   return {
     initialData: initialData ?? undefined,
-    isLoading: isSubmitting || isFetchingCarousel,
+    isLoading: isSubmitting || isFetchingBanner,
     notifications,
     closeNotification,
     handleNew,

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "../prisma.js";
 import {
+  CarouselImageRequest,
   CreateCarouselRequest,
   UpdateCarouselRequest,
 } from "../types/index.js";
@@ -8,20 +9,73 @@ import {
   validateCreateCarousel,
   validateUpdateCarousel,
 } from "../utils/carousel.js";
+import {
+  deleteStoredImage,
+  normalizeStoredImageReference,
+  toPublicImageUrl,
+} from "../utils/mediaStorage.js";
+
+const carouselWithImagesInclude = {
+  carouselImage: {
+    orderBy: { order: "asc" as const },
+  },
+};
+
+function mapCarouselImages(images: CarouselImageRequest[]) {
+  return images.map((image) => ({
+    image: normalizeStoredImageReference(image.image),
+    caption: image.caption?.trim() || null,
+    order: image.order,
+    status: image.status,
+  }));
+}
+
+function toCarouselResponse(
+  req: Request,
+  carousel: {
+    id: number;
+    headline: string;
+    message: string;
+    title: string;
+    remarks: string;
+    status: "Active" | "Inactive";
+    createdAt: Date;
+    updatedAt: Date;
+    carouselImage: Array<{
+      id: number;
+      carouselId: number;
+      image: string;
+      caption: string | null;
+      order: number;
+      status: "Active" | "Inactive";
+      createdAt: Date;
+      updatedAt: Date;
+    }>;
+  }
+) {
+  return {
+    ...carousel,
+    carouselImage: carousel.carouselImage.map((image) => ({
+      ...image,
+      image: toPublicImageUrl(req, image.image),
+    })),
+  };
+}
 
 /**
  * GET all carousels
  * @route GET /carousels
  */
 export const getAllCarousels = async (
-  _req: Request,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const banners = await prisma.carousel.findMany({
+    const carousels = await prisma.carousel.findMany({
+      include: carouselWithImagesInclude,
       orderBy: { createdAt: "desc" },
     });
-    res.json(banners);
+    res.json(carousels.map((carousel) => toCarouselResponse(req, carousel)));
   } catch (error) {
     console.error("Error fetching carousels:", error);
     res.status(500).json({ error: "Failed to fetch carousels" });
@@ -33,21 +87,22 @@ export const getAllCarousels = async (
  * @route GET /carousels/active
  */
 export const getActiveCarousel = async (
-  _req: Request,
+  req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const banner = await prisma.carousel.findFirst({
+    const carousel = await prisma.carousel.findFirst({
+      include: carouselWithImagesInclude,
       where: { status: "Active" },
       orderBy: { createdAt: "desc" },
     });
 
-    if (!banner) {
+    if (!carousel) {
       res.status(404).json({ error: "Active carousel not found" });
       return;
     }
 
-    res.json(banner);
+    res.json(toCarouselResponse(req, carousel));
   } catch (error) {
     console.error("Error fetching active carousel:", error);
     res.status(500).json({ error: "Failed to fetch active carousel" });
@@ -71,16 +126,17 @@ export const getCarouselById = async (
       return;
     }
 
-    const banner = await prisma.carousel.findUnique({
+    const carousel = await prisma.carousel.findUnique({
+      include: carouselWithImagesInclude,
       where: { id: parsedId },
     });
 
-    if (!banner) {
+    if (!carousel) {
       res.status(404).json({ error: "Carousel not found" });
       return;
     }
 
-    res.json(banner);
+    res.json(toCarouselResponse(req, carousel));
   } catch (error) {
     console.error("Error fetching carousel:", error);
     res.status(500).json({ error: "Failed to fetch carousel" });
@@ -96,7 +152,7 @@ export const createCarousel = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { headline, message, title, remarks, status } =
+    const { headline, message, title, remarks, status, images } =
       req.body as CreateCarouselRequest;
 
     // Validation
@@ -106,6 +162,10 @@ export const createCarousel = async (
       title,
       remarks,
       status,
+      images: images.map((image) => ({
+        ...image,
+        image: normalizeStoredImageReference(image.image),
+      })),
     });
 
     if (validationErrors.length > 0) {
@@ -114,8 +174,9 @@ export const createCarousel = async (
     }
 
     const nextStatus = status || "Active";
+    const mappedImages = mapCarouselImages(images);
 
-    const banner =
+    const carousel =
       nextStatus === "Active"
         ? await prisma.$transaction(async (tx) => {
             await tx.carousel.updateMany({
@@ -124,26 +185,34 @@ export const createCarousel = async (
             });
 
             return tx.carousel.create({
+              include: carouselWithImagesInclude,
               data: {
                 headline: headline.trim(),
                 message: message.trim(),
                 title: title.trim(),
                 remarks: remarks.trim(),
                 status: nextStatus,
+                carouselImage: {
+                  create: mappedImages,
+                },
               },
             });
           })
         : await prisma.carousel.create({
+            include: carouselWithImagesInclude,
             data: {
               headline: headline.trim(),
               message: message.trim(),
               title: title.trim(),
               remarks: remarks.trim(),
               status: nextStatus,
+              carouselImage: {
+                create: mappedImages,
+              },
             },
           });
 
-    res.status(201).json(banner);
+    res.status(201).json(toCarouselResponse(req, carousel));
   } catch (error: any) {
     console.error("Error creating carousel:", error);
 
@@ -169,9 +238,26 @@ export const updateCarousel = async (
     }
 
     const data = req.body as UpdateCarouselRequest;
+    const existingCarousel = await prisma.carousel.findUnique({
+      include: carouselWithImagesInclude,
+      where: { id: parsedId },
+    });
+
+    if (!existingCarousel) {
+      res.status(404).json({ error: "Carousel not found" });
+      return;
+    }
+
+    const normalizedImages = data.images?.map((image) => ({
+      ...image,
+      image: normalizeStoredImageReference(image.image),
+    }));
 
     // Validate update payload
-    const validationErrors = validateUpdateCarousel(data);
+    const validationErrors = validateUpdateCarousel({
+      ...data,
+      ...(normalizedImages ? { images: normalizedImages } : {}),
+    });
     if (validationErrors.length > 0) {
       res.status(400).json({ error: validationErrors.join(", ") });
       return;
@@ -184,9 +270,15 @@ export const updateCarousel = async (
       ...(data.title && { title: data.title.trim() }),
       ...(data.remarks && { remarks: data.remarks.trim() }),
       ...(data.status && { status: data.status }),
+      ...(normalizedImages && {
+        carouselImage: {
+          deleteMany: {},
+          create: mapCarouselImages(normalizedImages),
+        },
+      }),
     };
 
-    const banner =
+    const carousel =
       data.status === "Active"
         ? await prisma.$transaction(async (tx) => {
             await tx.carousel.updateMany({
@@ -197,16 +289,33 @@ export const updateCarousel = async (
             });
 
             return tx.carousel.update({
+              include: carouselWithImagesInclude,
               where: { id: parsedId },
               data: updateData,
             });
           })
         : await prisma.carousel.update({
+            include: carouselWithImagesInclude,
             where: { id: parsedId },
             data: updateData,
           });
 
-    res.json(banner);
+    if (normalizedImages) {
+      const nextImageKeys = new Set(
+        normalizedImages.map((image) => image.image)
+      );
+      const imagesToDelete = existingCarousel.carouselImage
+        .map((image) => image.image)
+        .filter(
+          (image) => !nextImageKeys.has(normalizeStoredImageReference(image))
+        );
+
+      await Promise.all(
+        imagesToDelete.map((image) => deleteStoredImage(image))
+      );
+    }
+
+    res.json(toCarouselResponse(req, carousel));
   } catch (error: any) {
     console.error("Error updating carousel:", error);
 
@@ -236,9 +345,31 @@ export const deleteCarousel = async (
       return;
     }
 
-    await prisma.carousel.delete({
+    const existingCarousel = await prisma.carousel.findUnique({
+      include: carouselWithImagesInclude,
       where: { id: parsedId },
     });
+
+    if (!existingCarousel) {
+      res.status(404).json({ error: "Carousel not found" });
+      return;
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.carouselImage.deleteMany({
+        where: { carouselId: parsedId },
+      });
+
+      await tx.carousel.delete({
+        where: { id: parsedId },
+      });
+    });
+
+    await Promise.all(
+      existingCarousel.carouselImage.map((image) =>
+        deleteStoredImage(image.image)
+      )
+    );
 
     res.json({ message: "Carousel deleted successfully" });
   } catch (error: any) {
@@ -276,9 +407,28 @@ export const deleteCarouselsBulk = async (
       return;
     }
 
-    const { count } = await prisma.carousel.deleteMany({
+    const carousels = await prisma.carousel.findMany({
+      include: carouselWithImagesInclude,
       where: { id: { in: parsedIds } },
     });
+
+    const count = await prisma.$transaction(async (tx) => {
+      await tx.carouselImage.deleteMany({
+        where: { carouselId: { in: parsedIds } },
+      });
+
+      const result = await tx.carousel.deleteMany({
+        where: { id: { in: parsedIds } },
+      });
+
+      return result.count;
+    });
+
+    await Promise.all(
+      carousels.flatMap((carousel) =>
+        carousel.carouselImage.map((image) => deleteStoredImage(image.image))
+      )
+    );
 
     res.json({ message: `${count} carousel(s) deleted successfully` });
   } catch (error) {

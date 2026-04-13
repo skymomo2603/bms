@@ -1,14 +1,6 @@
 import { getApiBaseUrl } from "@/lib/api/baseUrl";
-import { CarouselDto, CarouselStatus } from "@/types/carousel";
+import type { CarouselDto, CarouselPayload } from "@/types/carousel";
 import { toCarouselDto, toCarouselDtos } from "@/utils/carousel";
-
-export interface CarouselPayload {
-  headline: string;
-  message: string;
-  title: string;
-  remarks: string;
-  status: CarouselStatus;
-}
 
 async function parseErrorResponse(response: Response): Promise<string> {
   const contentType = response.headers.get("content-type");
@@ -48,7 +40,8 @@ export async function getCarousels(): Promise<CarouselDto[]> {
   const response = await fetch(`${getApiBaseUrl()}/carousels`);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch carousels");
+    const errorMessage = await parseErrorResponse(response);
+    throw new Error(errorMessage);
   }
 
   return toCarouselDtos(await response.json());
@@ -64,7 +57,8 @@ export async function getActiveCarousel(): Promise<CarouselDto | null> {
   }
 
   if (!response.ok) {
-    throw new Error("Failed to fetch active carousel");
+    const errorMessage = await parseErrorResponse(response);
+    throw new Error(errorMessage);
   }
 
   return toCarouselDto(await response.json());
@@ -74,7 +68,8 @@ export async function getCarousel(id: number): Promise<CarouselDto> {
   const response = await fetch(`${getApiBaseUrl()}/carousels/${id}`);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch carousel");
+    const errorMessage = await parseErrorResponse(response);
+    throw new Error(errorMessage);
   }
 
   return toCarouselDto(await response.json());

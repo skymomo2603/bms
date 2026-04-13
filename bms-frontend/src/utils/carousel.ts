@@ -1,7 +1,11 @@
-import {
+import type {
   CarouselDto,
   CarouselFormData,
+  CarouselImageDto,
+  CarouselImageFormData,
+  CarouselImagePayload,
   CarouselListFilterValues,
+  CarouselPayload,
   CarouselStatus,
 } from "@/types/carousel";
 
@@ -9,6 +13,22 @@ import { CAROUSEL_FILTER_KEY } from "@/constants/carousel";
 
 function normalizeCarouselStatus(value: unknown): CarouselStatus {
   return value === "Active" ? "Active" : "Inactive";
+}
+
+function toCarouselImageDto(value: unknown): CarouselImageDto {
+  const image = value as Partial<CarouselImageDto> | null | undefined;
+
+  return {
+    id: Number(image?.id ?? 0),
+    image: String(image?.image ?? ""),
+    caption: String(image?.caption ?? ""),
+    order: Number(image?.order ?? 0),
+    status: normalizeCarouselStatus(image?.status),
+  };
+}
+
+function toCarouselImageDtos(value: unknown): CarouselImageDto[] {
+  return Array.isArray(value) ? value.map(toCarouselImageDto) : [];
 }
 
 export function validateCarouselForm(formData: CarouselFormData): string[] {
@@ -24,11 +44,37 @@ export function validateCarouselForm(formData: CarouselFormData): string[] {
     errors.push("Title is required");
   }
 
+  if (formData.images.length === 0) {
+    errors.push("At least one image is required");
+  }
+
+  const seenOrders = new Set<number>();
+
+  formData.images.forEach((image, index) => {
+    const rowLabel = `Image row ${index + 1}`;
+
+    if (!image.image.trim()) {
+      errors.push(`${rowLabel}: image is required`);
+    }
+
+    if (!Number.isInteger(image.order) || image.order < 1) {
+      errors.push(`${rowLabel}: order must be a positive integer`);
+    } else if (seenOrders.has(image.order)) {
+      errors.push(`${rowLabel}: order values must be unique`);
+    } else {
+      seenOrders.add(image.order);
+    }
+  });
+
   return errors;
 }
 
 export function toCarouselDto(value: unknown): CarouselDto {
-  const carousel = value as Partial<CarouselDto> | null | undefined;
+  const carousel =
+    (value as
+      | (Partial<CarouselDto> & { carouselImage?: unknown[] })
+      | null
+      | undefined) ?? undefined;
 
   return {
     id: Number(carousel?.id ?? 0),
@@ -37,6 +83,7 @@ export function toCarouselDto(value: unknown): CarouselDto {
     title: String(carousel?.title ?? ""),
     remarks: String(carousel?.remarks ?? ""),
     status: normalizeCarouselStatus(carousel?.status),
+    images: toCarouselImageDtos(carousel?.images ?? carousel?.carouselImage),
   };
 }
 
@@ -51,6 +98,30 @@ export function toCarouselFormData(carousel: CarouselDto): CarouselFormData {
     title: carousel.title,
     remarks: carousel.remarks,
     status: carousel.status,
+    images: carousel.images.map(
+      (image): CarouselImageFormData => ({
+        id: image.id,
+        image: image.image,
+        caption: image.caption,
+        order: image.order,
+        status: image.status,
+      })
+    ),
+  };
+}
+
+export function toCarouselPayload(formData: CarouselFormData): CarouselPayload {
+  return {
+    ...formData,
+    images: formData.images.map(
+      (image): CarouselImagePayload => ({
+        ...(image.id ? { id: image.id } : {}),
+        image: image.image,
+        caption: image.caption.trim(),
+        order: image.order,
+        status: image.status,
+      })
+    ),
   };
 }
 

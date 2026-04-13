@@ -3,6 +3,7 @@ import {
   Status,
   UpdateHeroBannerRequest,
 } from "../types/index.js";
+import { assertNoInlineImageData } from "./mediaStorage.js";
 
 const HERO_BANNER_STATUSES: Status[] = ["Active", "Inactive"];
 
@@ -25,6 +26,11 @@ export function validateCreateHeroBanner(
 
   if (!data.image || !data.image.trim()) {
     errors.push("Image is required");
+  } else {
+    const imageError = assertNoInlineImageData(data.image, "Image");
+    if (imageError) {
+      errors.push(imageError);
+    }
   }
 
   if (data.remarks !== undefined && typeof data.remarks !== "string") {
@@ -53,6 +59,13 @@ export function validateUpdateHeroBanner(
 
   if (data.image !== undefined && !data.image.trim()) {
     errors.push("Image cannot be empty");
+  }
+
+  if (data.image !== undefined && data.image.trim()) {
+    const imageError = assertNoInlineImageData(data.image, "Image");
+    if (imageError) {
+      errors.push(imageError);
+    }
   }
 
   if (data.remarks !== undefined && typeof data.remarks !== "string") {

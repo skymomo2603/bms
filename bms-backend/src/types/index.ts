@@ -1,6 +1,6 @@
-import { Carousel, HeroBanner } from "@prisma/client";
+import { Carousel, CarouselImage, HeroBanner } from "@prisma/client";
 
-export type { Carousel, HeroBanner };
+export type { Carousel, CarouselImage, HeroBanner };
 
 export type Status = "Active" | "Inactive";
 
@@ -26,12 +26,22 @@ export interface CreateCarouselRequest {
   title: string;
   remarks: string;
   status: Status;
+  images: CarouselImageRequest[];
 }
 
 export interface UpdateCarouselRequest {
-  headline: string;
-  message: string;
-  title: string;
-  remarks: string;
+  headline?: string;
+  message?: string;
+  title?: string;
+  remarks?: string;
+  status?: Status;
+  images?: CarouselImageRequest[];
+}
+
+export interface CarouselImageRequest {
+  id?: number;
+  image: string;
+  caption?: string;
+  order: number;
   status: Status;
 }

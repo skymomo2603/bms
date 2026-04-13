@@ -11,13 +11,14 @@ This standard is intentionally pragmatic. The goal is clear responsibility bound
 ## Core Principles
 
 1. Keep `page.tsx` focused on orchestration.
-2. Keep reusable feature behavior in hooks.
-3. Keep pure transformation, filtering, and validation logic in utils.
-4. Keep static UI config in constants.
-5. Keep shared contracts in types.
-6. Split shared UI from feature-specific UI.
-7. Extract styles only when they start to dominate the component.
-8. Prefer consistency of responsibility over rigid file templates.
+2. Keep `src/app` focused on routes, layouts, and route-local framework files.
+3. Keep reusable feature behavior in hooks.
+4. Keep pure transformation, filtering, and validation logic in utils.
+5. Keep static UI config in constants.
+6. Keep shared contracts in types.
+7. Split shared UI from feature-specific UI.
+8. Extract styles only when they start to dominate the component.
+9. Prefer consistency of responsibility over rigid file templates.
 
 ## Folder Intent
 
@@ -37,7 +38,21 @@ Page files should avoid holding large blocks of:
 - normalization/mapping logic
 - repeated config objects
 
-### `src/app/components/admin/common`
+### `src/app`
+
+Keep framework-owned files and route segments here.
+
+Good examples:
+
+- `layout.tsx`
+- `page.tsx`
+- route groups and route segments
+- route-local loading/error files
+- app-scoped providers that are only used by the root layout
+
+Avoid treating `src/app` as the general home for shared business logic.
+
+### `src/components/admin/common`
 
 Put UI here only when it is genuinely shared across admin areas.
 
@@ -49,7 +64,7 @@ Examples:
 - notification stack
 - form section wrapper
 
-### `src/app/components/admin/<feature>`
+### `src/components/admin/<feature>`
 
 Put UI here when it belongs to a single feature or facility.
 
@@ -59,7 +74,7 @@ Examples:
 - hero banner list item
 - hero banner form
 
-### `src/app/hooks`
+### `src/hooks`
 
 Hooks should own reusable stateful client logic.
 
@@ -72,7 +87,7 @@ Good examples:
 
 Hooks should not become generic for the sake of genericity. Keep them feature-oriented unless multiple features already share the same behavior.
 
-### `src/app/utils`
+### `src/utils`
 
 Utils should stay pure.
 
@@ -85,7 +100,7 @@ Good examples:
 
 Utils should not depend on React state or component lifecycle.
 
-### `src/app/constants`
+### `src/constants`
 
 Put static configuration here.
 
@@ -97,7 +112,7 @@ Good examples:
 - dropdown filter config
 - shared labels or app text
 
-### `src/app/types`
+### `src/types`
 
 Put reusable TypeScript contracts here.
 
@@ -115,7 +130,7 @@ Separate DTO types from form types when their responsibilities differ.
 For a new facility, use this as the default shape when the feature is more than trivial:
 
 ```text
-src/app/
+src/
   constants/
     facility.ts
     facilityList.ts
@@ -130,6 +145,7 @@ src/app/
     FacilityListItem.tsx
     DeleteFacilityDialog.tsx
     FacilityStatusDialog.tsx
+  app/
   secure/admin/control/content/facility/
     page.tsx
     entry/page.tsx
@@ -211,6 +227,21 @@ Examples already established in the repo:
 - hero banner form validation
 - hero banner list filtering
 
+## Import Standard
+
+Use the `@/` alias for shared code under `src`.
+
+Examples:
+
+- `@/components/...`
+- `@/hooks/...`
+- `@/lib/...`
+- `@/constants/...`
+- `@/types/...`
+- `@/utils/...`
+
+Prefer relative imports for route-local app files such as `./layout`, `./globals.css`, or `./ThemeRegistry` when they are only used inside `src/app`.
+
 ## Shared vs Feature-Specific Rule
 
 Put code in `common` only if at least one of these is true:
@@ -262,7 +293,7 @@ For this stack, a reasonable baseline would be:
 
 If frontend tests are added later, start with the parts that benefit most from stable automated checks:
 
-- pure utils in `src/app/utils`
+- pure utils in `src/utils`
 - hooks with meaningful state transitions
 - critical forms
 - filtering and selection behavior
